@@ -1,0 +1,49 @@
+[package]
+name = "wachmann"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies.dotenv]
+version = "0.15"
+
+[dependencies.futures]
+version = "0.3"
+
+[dependencies.tokio]
+version = "1"
+features = [
+	"full"
+]
+
+[dependencies.twilight-cache-inmemory]
+version = "0.6"
+
+[dependencies.twilight-gateway]
+version = "0.6"
+
+[dependencies.twilight-http]
+version = "0.6"
+
+[dependencies.twilight-mention]
+version = "0.6"
+
+[dependencies.twilight-model]
+version = "0.6"
+
+[dependencies.twilight-standby]
+version = "0.6"
+
+[dependencies.twilight-util]
+version = "0.6"
+
+
+[profile.dev]
+opt-level = 0 # none
+debug = true
+debug-assertions = true
+
+[profile.release]
+opt-level = 3 # all
+debug-assertions = false
