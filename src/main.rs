@@ -1,12 +1,12 @@
 // todo remove this when wachmann is more finished
 #![allow(unused)]
 
+mod env;
+
 use std::error::Error;
 use std::time::Duration;
 
-type MainResult = Result<(), Box<dyn Error + Send + Sync>>;
-
-fn main() -> MainResult {
+fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 	let rt = tokio::runtime::Builder::new_multi_thread()
 		.enable_all()
 		.worker_threads(2)
@@ -21,8 +21,10 @@ fn main() -> MainResult {
 	Ok(())
 }
 
-async fn async_main() -> MainResult {
+async fn async_main() -> Result<(), Box<dyn Error + Send + Sync>> {
 	println!("runtime works lol");
+
+	let env = env::Env::get_env()?;
 
 	Ok(())
 }
