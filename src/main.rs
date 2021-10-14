@@ -2,26 +2,19 @@
 #![allow(unused)]
 
 mod env;
+mod module;
+mod logging;
 
 use std::error::Error;
 use std::time::Duration;
-
-use twilight_model::channel::message::{
-	AllowedMentions,
-	allowed_mentions::AllowedMentionsBuilder
-};
-
-use twilight_http::{
-	Client as HttpClient,
-	client::ClientBuilder as HttpClientBuilder
-};
-
+use twilight_model::channel::message::allowed_mentions::AllowedMentionsBuilder;
+use twilight_http::client::ClientBuilder as HttpClientBuilder;
 use twilight_gateway::{
 	cluster::{ Cluster, ShardScheme::Auto },
-	Event, Intents
+	Intents
 };
-
 use futures::stream::StreamExt;
+use module::{ Event, create_spawner };
 
 fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 	let rt = tokio::runtime::Builder::new_multi_thread()
@@ -69,6 +62,8 @@ async fn async_main() -> Result<(), Box<dyn Error + Send + Sync>> {
 		let mut sigterm = signal(SK::terminate()).unwrap();
 
 		tokio::select! {
+			// without biased, tokio::select! will choose random branches to poll,
+			// which incurs a small cpu cost for the random number generator
 			biased;
 
 			_ = sigint.recv() => {
@@ -83,8 +78,9 @@ async fn async_main() -> Result<(), Box<dyn Error + Send + Sync>> {
 	});
 
 	while let Some((shard_id, event)) = events.next().await {
-		// something?
-		println!("got some event");
+		let s = create_spawner(Event { shard_id, event, http: http.clone() });
+
+		s(logging::logging);
 	}
 
 	Ok(())
