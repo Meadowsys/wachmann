@@ -8,14 +8,3 @@ pub struct Event {
 	pub event: GatewayEvent,
 	pub http: HttpClient
 }
-
-pub fn create_spawner<F, C>(event: Event) -> impl Fn(C) -> ()
-where
-	C: Fn(Event) -> F,
-	F: Future + Send + 'static,
-	F::Output: Send + 'static
-{
-	move |f| {
-		tokio::spawn(f(event.clone()));
-	}
-}

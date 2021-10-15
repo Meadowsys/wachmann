@@ -14,7 +14,7 @@ use twilight_gateway::{
 	Intents
 };
 use futures::stream::StreamExt;
-use module::{ Event, create_spawner };
+use module::Event;
 
 fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 	let rt = tokio::runtime::Builder::new_multi_thread()
@@ -78,9 +78,12 @@ async fn async_main() -> Result<(), Box<dyn Error + Send + Sync>> {
 	});
 
 	while let Some((shard_id, event)) = events.next().await {
-		let s = create_spawner(Event { shard_id, event, http: http.clone() });
-
-		s(logging::logging);
+		use tokio::spawn as s;
+		let e = Event { shard_id, event, http: http.clone() };
+		let e = move || e.clone();
+		s(logging::logging(e()));
+		s(logging::logging(e()));
+		s(logging::logging(e()));
 	}
 
 	Ok(())
