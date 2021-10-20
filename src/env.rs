@@ -24,7 +24,7 @@ impl Env {
 
 		let token = var("TOKEN")
 			.or_else(|_| var("BOT_TOKEN"))
-			?;
+		?;
 
 		Ok(Env { token })
 	}
