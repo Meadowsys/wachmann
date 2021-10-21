@@ -8,3 +8,12 @@ pub struct Event {
 	pub event: GatewayEvent,
 	pub http: HttpClient
 }
+
+/// s stands for spawn
+pub fn s<F>(event: &Event, f: impl Fn(Event) -> F)
+where
+	F: Future + Send + 'static,
+	F::Output: Send + 'static
+{
+	tokio::spawn(f(event.clone()));
+}

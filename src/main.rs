@@ -79,12 +79,10 @@ async fn async_main() -> Result<(), Box<dyn Error + Send + Sync>> {
 	});
 
 	while let Some((shard_id, event)) = events.next().await {
-		use tokio::spawn as s;
+		use module::s;
 		let e = Event { shard_id, event, http: http.clone() };
-		let e = move || e.clone();
-		s(logging::logging(e()));
-		s(logging::logging(e()));
-		s(logging::logging(e()));
+
+		module::s(&e, logging::logging);
 	}
 
 	Ok(())
