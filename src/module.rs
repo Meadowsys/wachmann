@@ -10,10 +10,10 @@ pub struct Event {
 }
 
 /// s stands for spawn
-pub fn s<F>(event: &Event, f: impl Fn(Event) -> F)
+pub fn s<F>(event: &Event, f: impl Fn(Event) -> F) -> tokio::task::JoinHandle<F::Output>
 where
 	F: Future + Send + 'static,
 	F::Output: Send + 'static
 {
-	tokio::spawn(f(event.clone()));
+	tokio::spawn(f(event.clone()))
 }
