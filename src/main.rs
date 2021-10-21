@@ -64,6 +64,7 @@ async fn async_main() -> Result<(), Box<dyn Error + Send + Sync>> {
 		tokio::select! {
 			// without biased, tokio::select! will choose random branches to poll,
 			// which incurs a small cpu cost for the random number generator
+			// biased polling is fine here
 			biased;
 
 			_ = sigint.recv() => {
