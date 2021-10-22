@@ -9,6 +9,21 @@ use std::error::Error;
 /// id!(server_support -> ChannelId, dev 44556, prod 37485)
 /// let id = galacon_main();
 /// ```
+///
+/// If you want a method for a struct or something to force it to
+/// be called on an instance of that struct, you can do
+/// that, just add `method` to the beginning of the macro call like so:
+/// ```
+/// struct H;
+/// impl H {
+///    id!(method galacon_main -> GuildId, dev 12345, prod 54321);
+/// }
+///
+/// let id = H.galacon_main();
+/// ```
+///
+/// No idea if it can pull values from `self`, that would be interesting but also
+/// that is not supported, and not the point of this macro lol
 macro_rules! id {
 	(name: $name:ident, type: $type:ident, development: $dev:expr, production: $prod:expr) => {
 		// development
@@ -23,6 +38,21 @@ macro_rules! id {
 	};
 	($name:ident -> $type:ident, dev $dev:expr, prod $prod:expr) => {
 		id!(name: $name, type: $type, development: $dev, production: $prod);
+	};
+
+	(method name: $name:ident, type: $type:ident, development: $dev:expr, production: $prod:expr) => {
+		// development
+		#[inline]
+		#[cfg(debug_assertions)]
+		pub fn $name(&self) -> $type { $type($dev) }
+
+		// production
+		#[inline]
+		#[cfg(not(debug_assertions))]
+		pub fn $name(&self) -> $type { $type($prod) }
+	};
+	(method $name:ident -> $type:ident, dev $dev:expr, prod $prod:expr) => {
+		id!(method name: $name, type: $type, development: $dev, production: $prod);
 	};
 }
 
