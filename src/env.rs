@@ -1,5 +1,31 @@
 use std::error::Error;
 
+/// generates an inlineable function that returns the provided ids. in the macro
+/// call, you provide a production id and a development id, and it will return
+/// the appropriate one depending on the build mode (debug or release build)
+///
+/// ```
+/// id!(galacon_main -> GuildId, dev 12345, prod 54321);
+/// id!(server_support -> ChannelId, dev 44556, prod 37485)
+/// let id = galacon_main();
+/// ```
+macro_rules! id {
+	(name: $name:ident, type: $type:ident, development: $dev:expr, production: $prod:expr) => {
+		// development
+		#[inline]
+		#[cfg(debug_assertions)]
+		pub fn $name() -> $type { $type($dev) }
+
+		// production
+		#[inline]
+		#[cfg(not(debug_assertions))]
+		pub fn $name() -> $type { $type($prod) }
+	};
+	($name:ident -> $type:ident, dev $dev:expr, prod $prod:expr) => {
+		id!(name: $name, type: $type, development: $dev, production: $prod);
+	};
+}
+
 #[cfg(debug_assertions)]
 fn init_dotenv() {
 	if let Err(e) = dotenv::dotenv() {
