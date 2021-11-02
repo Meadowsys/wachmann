@@ -3,7 +3,7 @@
 
 mod env;
 mod module;
-mod logging;
+mod modules;
 
 use std::error::Error;
 use std::time::Duration;
@@ -82,7 +82,7 @@ async fn async_main() -> Result<(), Box<dyn Error + Send + Sync>> {
 		use module::s;
 		let e = Event { shard_id, event, http: http.clone() };
 
-		module::s(&e, logging::logging);
+		// s(&e, logging::logging);
 	}
 
 	Ok(())
