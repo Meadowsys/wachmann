@@ -2,28 +2,17 @@
 #![allow(unused)]
 
 mod env;
-mod module;
 mod logging;
 
-use std::error::Error;
-use std::time::Duration;
-use twilight_model::channel::message::allowed_mentions::AllowedMentionsBuilder;
-use twilight_http::client::ClientBuilder as HttpClientBuilder;
-use twilight_gateway::{
-	cluster::{ Cluster, ShardScheme::Auto },
-	Intents
-};
-use futures::stream::StreamExt;
-use module::Event;
+use twilight_bot_utils::prelude::*;
 
-fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
-	let rt = tokio::runtime::Builder::new_multi_thread()
-		.enable_all()
-		.worker_threads(2)
-		.max_blocking_threads(32)
-		.thread_keep_alive(Duration::from_secs(60))
-		.build()
-		.unwrap();
+use std::time::Duration;
+use twilight_bot_utils::modules::ModuleHandler;
+use twilight_bot_utils::run::watch_for_shutdown_signals;
+use twilight_bot_utils::run::process_events;
+
+fn main() -> MainResult {
+	let rt = twilight_bot_utils::rt::make_tokio_runtime();
 
 	rt.block_on(async_main())?;
 	rt.shutdown_timeout(Duration::from_secs(60));
@@ -33,57 +22,40 @@ fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 	Ok(())
 }
 
-async fn async_main() -> Result<(), Box<dyn Error + Send + Sync>> {
+async fn async_main() -> MainResult {
 	println!("starting up...");
 
-	let env = env::Env::get_env()?;
-
-	let allowed_mentions = AllowedMentionsBuilder::new()
-		.users()
-		.build();
-
-	let http = HttpClientBuilder::new()
-		.default_allowed_mentions(allowed_mentions)
-		.build();
-
+	let env = Env::get_env();
+	let http = twilight_bot_utils::http::setup_http(&env)?;
 	let intents = Intents::all();
+	let (cluster, events) = twilight_bot_utils::cluster::setup_cluster(&env, &intents).await?;
+	let current_user = twilight_bot_utils::http::get_current_user(&http).await?;
 
-	let (cluster, mut events) = Cluster::builder(env.token(), intents)
-		.shard_scheme(Auto)
-		.build().await?;
+	let mut modules = ModuleHandler::with_capacity(10);
+
+	#[cfg(debug_assertions)] {
+		modules.add_module(logging::Logging());
+	}
+
+	#[cfg(not(debug_assertions))] {
+		// something
+	}
+
+	let modules = modules
+		.init_modules(&http, &current_user)
+		.await?
+		.into_modules();
 
 	cluster.up().await;
 	println!("up!");
 
 	let cluster_down = cluster.clone();
-	tokio::spawn(async move {
-		use tokio::signal::unix::{ signal, SignalKind as SK };
-		let mut sigint = signal(SK::interrupt()).unwrap();
-		let mut sigterm = signal(SK::terminate()).unwrap();
-
-		tokio::select! {
-			// without biased, tokio::select! will choose random branches to poll,
-			// which incurs a small cpu cost for the random number generator
-			// biased polling is fine here
-			biased;
-
-			_ = sigint.recv() => {
-				println!("received SIGINT, shutting down...");
-			}
-			_ = sigterm.recv() => {
-				println!("received SIGTERM, shutting down...");
-			}
-		}
-
+	spawn(watch_for_shutdown_signals(move |sig| {
+		println!("received {}, shutting down...", sig);
 		cluster_down.down();
-	});
+	}));
 
-	while let Some((shard_id, event)) = events.next().await {
-		use module::s;
-		let e = Event { shard_id, event, http: http.clone() };
-
-		module::s(&e, logging::logging);
-	}
+	process_events(events, http, modules).await;
 
 	Ok(())
 }

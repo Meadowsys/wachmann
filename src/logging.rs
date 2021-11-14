@@ -1,12 +1,18 @@
-use crate::module::Event;
+use twilight_bot_utils::prelude::*;
 
-pub async fn logging(event: Event) {
-	use twilight_gateway::Event::*;
+pub struct Logging();
 
-	match event.event {
-		MessageCreate(msg) => {
-			println!("got msg {}", msg.content);
+#[async_trait]
+impl Module for Logging {
+	async fn handle_event(&self, event: Event) -> MainResult {
+		match event.event {
+			MessageCreate(msg) => {
+				println!("message: {}", msg.content);
+			}
+
+			_ => {}
 		}
-		_ => {}
+
+		Ok(())
 	}
 }
