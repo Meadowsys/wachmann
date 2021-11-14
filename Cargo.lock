@@ -1209,7 +1209,7 @@ dependencies = [
 [[package]]
 name = "twilight-bot-utils"
 version = "0.1.0"
-source = "git+https://github.com/autumnblazey/twilight-bot-utils.git?rev=ab293f4e982a78a31f202502a3e844735dfa2976#ab293f4e982a78a31f202502a3e844735dfa2976"
+source = "git+https://github.com/autumnblazey/twilight-bot-utils.git?rev=467458de5f14f805bbef7e9131fa06a7f16aff0a#467458de5f14f805bbef7e9131fa06a7f16aff0a"
 dependencies = [
  "async-trait",
  "chrono",
@@ -1326,6 +1326,9 @@ name = "twilight-util"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6dbb2151d979abc81e43d4c7747047c4884eef5a8400b43f3bb265dbe5b503ea"
+dependencies = [
+ "twilight-model",
+]
 
 [[package]]
 name = "typenum"

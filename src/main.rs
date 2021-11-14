@@ -33,12 +33,19 @@ async fn async_main() -> MainResult {
 
 	let mut modules = ModuleHandler::with_capacity(10);
 
+	modules.add_module(logging::Logging::new(
+		env_var("LOGGING_WEBHOOK")
+			.or("WEBHOOK_URL")
+			.or("WACHMANN_WEBHOOK_URL")
+			.get()
+	));
+
 	#[cfg(debug_assertions)] {
-		modules.add_module(logging::Logging());
+		// debug-specific modules
 	}
 
 	#[cfg(not(debug_assertions))] {
-		// something
+		// production-specific modules
 	}
 
 	let modules = modules
