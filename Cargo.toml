@@ -8,7 +8,7 @@ rust-version = "1.56.1"
 
 [dependencies.twilight-bot-utils]
 git = "https://github.com/autumnblazey/twilight-bot-utils.git"
-rev = "467458de5f14f805bbef7e9131fa06a7f16aff0a"
+rev = "de51122929327a91bdef978e5f2182d669504598"
 
 [profile.dev]
 opt-level = 0 # none

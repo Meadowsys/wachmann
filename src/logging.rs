@@ -77,3 +77,7 @@ impl Module for Logging {
 		Ok(())
 	}
 }
+
+fn wef() {
+	use twilight_embed_builder::EmbedBuilder;
+}

@@ -1209,7 +1209,7 @@ dependencies = [
 [[package]]
 name = "twilight-bot-utils"
 version = "0.1.0"
-source = "git+https://github.com/autumnblazey/twilight-bot-utils.git?rev=467458de5f14f805bbef7e9131fa06a7f16aff0a#467458de5f14f805bbef7e9131fa06a7f16aff0a"
+source = "git+https://github.com/autumnblazey/twilight-bot-utils.git?rev=de51122929327a91bdef978e5f2182d669504598#de51122929327a91bdef978e5f2182d669504598"
 dependencies = [
  "async-trait",
  "chrono",
@@ -1217,6 +1217,7 @@ dependencies = [
  "futures",
  "tokio",
  "twilight-cache-inmemory",
+ "twilight-embed-builder",
  "twilight-gateway",
  "twilight-http",
  "twilight-mention",
@@ -1234,6 +1235,15 @@ dependencies = [
  "bitflags",
  "dashmap",
  "serde",
+ "twilight-model",
+]
+
+[[package]]
+name = "twilight-embed-builder"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59197236720259d1c44b5258ed4b85ff9fb18014ff5474ae389082ab41d8f704"
+dependencies = [
  "twilight-model",
 ]
 
