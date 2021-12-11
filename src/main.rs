@@ -33,7 +33,7 @@ async fn async_main() -> MainResult {
 
 	let mut modules = ModuleHandler::with_capacity(10);
 
-	modules.add_module(logging::Logging::new(
+	modules.add_module(logging::new(
 		env_var("LOGGING_WEBHOOK")
 			.or("WEBHOOK_URL")
 			.or("WACHMANN_WEBHOOK_URL")

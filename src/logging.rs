@@ -2,11 +2,17 @@ use twilight_bot_utils::prelude::*;
 use twilight_http::Client as HttpClient;
 use twilight_http::client::ClientBuilder as HttpClientBuilder;
 use twilight_util::link::webhook::parse;
+
 pub struct Logging {
 	webhook_url: String,
 	id: WebhookId,
 	token: String,
 	channel_id: ChannelId
+}
+
+#[inline]
+pub fn new(webhook_url: String) -> Logging {
+	Logging::new(webhook_url)
 }
 
 #[allow(clippy::new_without_default)]
