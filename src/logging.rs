@@ -61,6 +61,9 @@ impl Module for Logging {
 	}
 
 	async fn handle_event(&self, event: Event) -> HandleResult {
+		// i add all events manually so that when something is added/removed, i will
+		// notice for sure because the build breaks
+
 		match event.event {
 			MessageCreate(msg) => {
 				if self.channel_id == msg.channel_id { return Ok(()) }
@@ -77,7 +80,71 @@ impl Module for Logging {
 				}
 			}
 
-			_ => {}
+			// unused events
+			BanAdd(_) => {}
+			BanRemove(_) => {}
+			ChannelCreate(_) => {}
+			ChannelDelete(_) => {}
+			ChannelPinsUpdate(_) => {}
+			ChannelUpdate(_) => {}
+			GatewayHeartbeat(_) => {}
+			GatewayHeartbeatAck => {}
+			GatewayHello(_) => {}
+			GatewayInvalidateSession(_) => {}
+			GatewayReconnect => {}
+			GuildCreate(_) => {}
+			GuildDelete(_) => {}
+			GuildEmojisUpdate(_) => {}
+			GuildIntegrationsUpdate(_) => {}
+			GuildUpdate(_) => {}
+			IntegrationCreate(_) => {}
+			IntegrationDelete(_) => {}
+			IntegrationUpdate(_) => {}
+			InteractionCreate(_) => {}
+			InviteCreate(_) => {}
+			InviteDelete(_) => {}
+			MemberAdd(_) => {}
+			MemberRemove(_) => {}
+			MemberUpdate(_) => {}
+			MemberChunk(_) => {}
+			MessageDelete(_) => {}
+			MessageDeleteBulk(_) => {}
+			MessageUpdate(_) => {}
+			PresenceUpdate(_) => {}
+			ReactionAdd(_) => {}
+			ReactionRemove(_) => {}
+			ReactionRemoveAll(_) => {}
+			ReactionRemoveEmoji(_) => {}
+			Ready(_) => {}
+			Resumed => {}
+			RoleCreate(_) => {}
+			RoleDelete(_) => {}
+			RoleUpdate(_) => {}
+			ShardConnected(_) => {}
+			ShardConnecting(_) => {}
+			ShardDisconnected(_) => {}
+			ShardIdentifying(_) => {}
+			ShardReconnecting(_) => {}
+			ShardPayload(_) => {}
+			ShardResuming(_) => {}
+			StageInstanceCreate(_) => {}
+			StageInstanceDelete(_) => {}
+			StageInstanceUpdate(_) => {}
+			ThreadCreate(_) => {}
+			ThreadDelete(_) => {}
+			ThreadListSync(_) => {}
+			ThreadMemberUpdate(_) => {}
+			ThreadMembersUpdate(_) => {}
+			ThreadUpdate(_) => {}
+			TypingStart(_) => {}
+			UnavailableGuild(_) => {}
+			UserUpdate(_) => {}
+			VoiceServerUpdate(_) => {}
+			VoiceStateUpdate(_) => {}
+			WebhooksUpdate(_) => {}
+
+			GiftCodeUpdate => { /* undocumented */ }
+			PresencesReplace => { /* for bots, is always empty and useless */ }
 		}
 
 		Ok(())
