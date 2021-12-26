@@ -1,0 +1,17 @@
+{
+	"name": "wachmann",
+	"version": "0.1.0",
+	"scripts": {},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/autumnblazey/wachmann.git"
+	},
+	"author": "Autumn Meadow",
+	"license": "AGPL-3.0-only",
+	"devDependencies": {
+		"@types/node": "^17.0.4",
+		"rollup": "^2.62.0",
+		"tslib": "^2.3.1",
+		"typescript": "^4.5.4"
+	}
+}
