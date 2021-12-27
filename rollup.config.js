@@ -39,7 +39,10 @@ const config = {
 
 		// create aliases for some dependencies
 		alias({
-			entries: []
+			entries: [
+				{ find: "arangojs", replacement: "./node_modules/_arangojs/src/index" },
+				{ find: "zod", replacement: "./node_modules/_zod/src/index" }
+			]
 		}),
 
 		// some constants
