@@ -8,9 +8,6 @@ use twilight_bot_utils::prelude::*;
 
 use std::os::unix::net::UnixStream;
 use std::time::Duration;
-use twilight_bot_utils::modules::ModuleHandler;
-use twilight_bot_utils::run::watch_for_shutdown_signals;
-use twilight_bot_utils::run::process_events;
 
 fn main() -> MainResult {
 	let mut socket = UnixStream::connect("db_service.sock").unwrap();
