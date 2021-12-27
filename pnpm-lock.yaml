@@ -7,7 +7,7 @@ specifiers:
   '@rollup/plugin-node-resolve': ^13.1.1
   '@rollup/plugin-replace': ^3.0.0
   '@types/node': ^17.0.4
-  _arangojs: github:arangodb/arangojs#v7.6.1
+  _arangojs: github:autumnblazey/arangojs#v7.6.1-patch.5
   _zod: github:colinhacks/zod#v3.11.6
   dotenv: ^10.0.0
   rollup: ^2.62.0
@@ -17,6 +17,7 @@ specifiers:
   rollup-plugin-typescript2: ^0.31.1
   tslib: ^2.3.1
   typescript: ^4.5.4
+  x3-linkedlist: ^1.2.0
 
 devDependencies:
   '@rollup/plugin-alias': 3.1.8_rollup@2.62.0
@@ -25,7 +26,7 @@ devDependencies:
   '@rollup/plugin-node-resolve': 13.1.1_rollup@2.62.0
   '@rollup/plugin-replace': 3.0.0_rollup@2.62.0
   '@types/node': 17.0.5
-  _arangojs: github.com/arangodb/arangojs/dd1f339cd1531e4c52d535bcdf7e443e1f1c7ef3
+  _arangojs: github.com/autumnblazey/arangojs/c2c8899bae915b8807906096f9b6e9ecb76b6d2f
   _zod: github.com/colinhacks/zod/fdd708493e4422dba6453908af55ef0d58767c03
   dotenv: 10.0.0
   rollup: 2.62.0
@@ -35,6 +36,7 @@ devDependencies:
   rollup-plugin-typescript2: 0.31.1_20638f0db47be5a3799665adff592b50
   tslib: 2.3.1
   typescript: 4.5.4
+  x3-linkedlist: 1.2.0
 
 packages:
 
@@ -935,8 +937,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  github.com/arangodb/arangojs/dd1f339cd1531e4c52d535bcdf7e443e1f1c7ef3:
-    resolution: {tarball: https://codeload.github.com/arangodb/arangojs/tar.gz/dd1f339cd1531e4c52d535bcdf7e443e1f1c7ef3}
+  github.com/autumnblazey/arangojs/c2c8899bae915b8807906096f9b6e9ecb76b6d2f:
+    resolution: {tarball: https://codeload.github.com/autumnblazey/arangojs/tar.gz/c2c8899bae915b8807906096f9b6e9ecb76b6d2f}
     name: arangojs
     version: 7.6.1
     engines: {node: '>=10'}
