@@ -1,3 +1,6 @@
+import "source-map-support/register"
+import "dotenv/config";
+
 import net from "net";
 
 const sock_path = "db_service.sock";

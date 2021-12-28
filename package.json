@@ -27,6 +27,7 @@
 		"rollup-plugin-notify": "^1.1.0",
 		"rollup-plugin-terser": "^7.0.2",
 		"rollup-plugin-typescript2": "^0.31.1",
+		"source-map-support": "^0.5.21",
 		"tslib": "^2.3.1",
 		"typescript": "^4.5.4",
 		"x3-linkedlist": "^1.2.0"

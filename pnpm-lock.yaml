@@ -16,6 +16,7 @@ specifiers:
   rollup-plugin-notify: ^1.1.0
   rollup-plugin-terser: ^7.0.2
   rollup-plugin-typescript2: ^0.31.1
+  source-map-support: ^0.5.21
   tslib: ^2.3.1
   typescript: ^4.5.4
   x3-linkedlist: ^1.2.0
@@ -36,6 +37,7 @@ devDependencies:
   rollup-plugin-notify: 1.1.0_rollup@2.62.0
   rollup-plugin-terser: 7.0.2_rollup@2.62.0
   rollup-plugin-typescript2: 0.31.1_20638f0db47be5a3799665adff592b50
+  source-map-support: 0.5.21
   tslib: 2.3.1
   typescript: 4.5.4
   x3-linkedlist: 1.2.0
