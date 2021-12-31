@@ -3,6 +3,7 @@
 
 mod env;
 mod logging;
+mod client_messages;
 mod server_messages;
 
 use twilight_bot_utils::prelude::*;
@@ -33,6 +34,12 @@ fn main() -> MainResult {
 	println!("{}", read_str);
 	let deserialised = serde_json::from_str::<ServerMessage>(&read_str)?;
 	println!("{:?}", deserialised);
+
+	let message = client_messages::ClientMessage::PutTestData {
+		data: "äääääääääääääääääää".into()
+	};
+
+	socket.write(serde_json::to_string(&message)?.as_bytes())?;
 	drop(socket);
 
 	// let rt = twilight_bot_utils::rt::make_tokio_runtime();
