@@ -71,13 +71,15 @@ function create_connection_incrementer() {
 	return { increment_connections, decrement_connections, get_connections };
 
 	function increment_connections() {
-		console.log("connection created");
-		return ++num_connections;
+		num_connections += 1;
+		console.log(`connection created, ${num_connections} connection${num_connections === 1 ? "" : "s"}`);
+		return num_connections;
 	}
 
 	function decrement_connections() {
-		console.log("connection closed");
-		return --num_connections;
+		num_connections -= 1;
+		console.log(`connection closed, ${num_connections} connection${num_connections === 1 ? "" : "s"}`);
+		return num_connections;
 	}
 
 	function get_connections() {
