@@ -6,19 +6,37 @@ mod logging;
 
 use twilight_bot_utils::prelude::*;
 
+use std::io::Read;
+use std::io::Write;
 use std::os::unix::net::UnixStream;
 use std::time::Duration;
 
+fn tmp_read_next_line(stream: &mut UnixStream) -> MainResult<String> {
+	let mut read_bytes = vec![];
+	let mut next_byte = [0u8; 1];
+
+	loop {
+		let read_bytes_num = stream.read(&mut next_byte)?;
+		if read_bytes_num == 0 || next_byte[0] == b'\n' {
+			return Ok(String::from_utf8(read_bytes)?)
+		}
+
+		read_bytes.push(next_byte[0]);
+	}
+}
+
 fn main() -> MainResult {
 	let mut socket = UnixStream::connect("db_service.sock").unwrap();
+	let read_str = tmp_read_next_line(&mut socket)?;
+	println!("{}", read_str);
 	drop(socket);
 
-	let rt = twilight_bot_utils::rt::make_tokio_runtime();
+	// let rt = twilight_bot_utils::rt::make_tokio_runtime();
 
-	rt.block_on(async_main())?;
-	rt.shutdown_timeout(Duration::from_secs(60));
+	// rt.block_on(async_main())?;
+	// rt.shutdown_timeout(Duration::from_secs(60));
 
-	println!("down!");
+	// println!("down!");
 
 	Ok(())
 }
