@@ -1,10 +1,21 @@
 import "source-map-support/register"
 import "dotenv/config";
-
 import fs from "fs";
 import net from "net";
-
+import { arangojs } from "arangojs";
+import { get_env } from "./env";
 import type { ReadyMessage } from "./server-messages";
+
+let env = get_env();
+
+let db = arangojs({
+	url: env.arango_url,
+	databaseName: env.arango_database,
+	auth: {
+		username: env.arango_user,
+		password: env.arango_password
+	}
+});
 
 const sock_path = "db_service.sock";
 if (fs.existsSync(sock_path)) {
@@ -23,8 +34,7 @@ console.log("server started");
 
 let {
 	increment_connections,
-	decrement_connections,
-	get_connections
+	decrement_connections
 } = create_connection_incrementer();
 
 function handle_connection(connection: net.Socket) {
