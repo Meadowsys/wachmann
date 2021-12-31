@@ -13,19 +13,21 @@ server.on("connection", handle_connection);
 	server.close();
 }));
 
-let get_id = create_get_id();
+let {
+	increment_connections,
+	decrement_connections,
+	get_connections
+} = create_connection_incrementer();
 
-let { increment_connections, decrement_connections, get_connections } = create_connection_incrementer();
 function handle_connection(connection: net.Socket) {
 	increment_connections();
-	let id = get_id();
 
 	let { handle_data, write } = create_handle_data(connection);
 
 	connection.on("data", handle_data);
 
 	connection.on("error", err => {
-		console.error(`socket errored! id: ${id}`);
+		console.error(`a socket errored!`);
 		console.error(err);
 	});
 
@@ -34,7 +36,6 @@ function handle_connection(connection: net.Socket) {
 	});
 
 	let msg: ReadyMessage = {
-		id,
 		message: "ready"
 	};
 	write(msg);
@@ -82,9 +83,4 @@ function create_connection_incrementer() {
 	function get_connections() {
 		return num_connections;
 	}
-}
-
-function create_get_id() {
-	let id = 0;
-	return () => (++id).toString().padStart(5, "0");
 }

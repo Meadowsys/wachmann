@@ -6,7 +6,5 @@ use serde::Deserialize;
 #[serde(tag = "message")]
 #[serde(rename_all = "snake_case")]
 pub enum ServerMessage {
-	Ready {
-		id: String
-	}
+	Ready {}
 }
