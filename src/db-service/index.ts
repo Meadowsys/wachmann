@@ -1,17 +1,25 @@
 import "source-map-support/register"
 import "dotenv/config";
 
+import fs from "fs";
 import net from "net";
 
 import type { ReadyMessage } from "./server-messages";
 
 const sock_path = "db_service.sock";
+if (fs.existsSync(sock_path)) {
+	console.log("address already in use, will not start up");
+	console.log("if not, then run `rm db_service.sock` and start this server again");
+	process.exit(1);
+}
+
 const server = net.createServer();
-await new Promise<void>(r => server.listen(sock_path, r));
 server.on("connection", handle_connection);
+await new Promise<void>(r => server.listen(sock_path, r));
 ["SIGINT", "SIGTERM", "exit"].forEach(s => process.on(s, () => {
-	server.close();
+	server.close(err => err ?? console.log("server closed"));
 }));
+console.log("server started");
 
 let {
 	increment_connections,
