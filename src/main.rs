@@ -3,9 +3,11 @@
 
 mod env;
 mod logging;
+mod server_messages;
 
 use twilight_bot_utils::prelude::*;
 
+use server_messages::ServerMessage;
 use std::io::Read;
 use std::io::Write;
 use std::os::unix::net::UnixStream;
@@ -29,6 +31,8 @@ fn main() -> MainResult {
 	let mut socket = UnixStream::connect("db_service.sock").unwrap();
 	let read_str = tmp_read_next_line(&mut socket)?;
 	println!("{}", read_str);
+	let deserialised = serde_json::from_str::<ServerMessage>(&read_str)?;
+	println!("{:?}", deserialised);
 	drop(socket);
 
 	// let rt = twilight_bot_utils::rt::make_tokio_runtime();

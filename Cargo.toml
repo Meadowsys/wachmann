@@ -7,6 +7,13 @@ edition = "2021"
 rust-version = "1.56.1"
 license = "AGPL-3.0-only"
 
+[dependencies.serde]
+version = "1.0.132"
+features = ["derive"]
+
+[dependencies.serde_json]
+version = "1.0.73"
+
 [dependencies.twilight-bot-utils]
 git = "https://github.com/autumnblazey/twilight-bot-utils.git"
 rev = "de51122929327a91bdef978e5f2182d669504598"
