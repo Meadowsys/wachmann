@@ -19,8 +19,8 @@ let db = arangojs({
 
 const sock_path = "db_service.sock";
 if (fs.existsSync(sock_path)) {
-	console.log("address already in use, will not start up");
-	console.log("if not, then run `rm db_service.sock` and start this server again");
+	console.log("Error: `db_service.sock` already in use, database connector will not start up. if no service is running on `db_service.sock`, then `rm db_service.sock` and start this server again");
+	console.log("if no service is running on `db_service.sock`, then `rm db_service.sock` and start this server again");
 	process.exit(1);
 }
 

@@ -29,7 +29,8 @@ fn tmp_read_next_line(stream: &mut UnixStream) -> MainResult<String> {
 }
 
 fn main() -> MainResult {
-	let mut socket = UnixStream::connect("db_service.sock").unwrap();
+	let mut socket = UnixStream::connect("db_service.sock")
+		.map_err(|_| "could not connect to db_service.sock, wachmann will not start up. if the database connector is running, then restart it and start wachmann again")?;
 	let read_str = tmp_read_next_line(&mut socket)?;
 	println!("{}", read_str);
 	let deserialised = serde_json::from_str::<ServerMessage>(&read_str)?;
