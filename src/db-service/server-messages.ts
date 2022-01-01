@@ -10,7 +10,7 @@ export const ready_message = object({
 export type TestDataMessage = z.infer<typeof test_data_message>;
 export const test_data_message = object({
 	message: literal("test_data"),
-	id: string(),
+	key: string(),
 	data: string()
 });
 

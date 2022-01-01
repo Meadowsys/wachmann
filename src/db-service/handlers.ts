@@ -71,8 +71,8 @@ export async function create_handle_data(
 		write({
 			message: "test_data",
 			data: "wefiojfweoewfijjwefjiooijoij",
-			id: "42"
-		})
+			key: "42"
+		});
 
 		handle_data();
 	}
@@ -80,11 +80,16 @@ export async function create_handle_data(
 	async function handle_put_test_data(msg: PutTestDataMessage) {
 		console.log(JSON.stringify(msg, null, 3));
 
+		let document = await test_collection.save(
+			{ data: msg.data },
+			{ returnNew: true }
+		);
+
 		write({
 			message: "test_data",
-			data: "wefiojfweoewfijjwefjiooijoij",
-			id: "42"
-		})
+			data: document.new.data,
+			key: document._key
+		});
 
 		handle_data();
 	}
