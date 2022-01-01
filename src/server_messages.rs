@@ -10,5 +10,8 @@ pub enum ServerMessage {
 	TestData {
 		id: String,
 		data: String
+	},
+	Error {
+		error: String
 	}
 }

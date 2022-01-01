@@ -41,6 +41,12 @@ fn main() -> MainResult {
 	};
 
 	socket.write(serde_json::to_string(&message)?.as_bytes())?;
+	socket.write(b"\n")?;
+	println!("reading next message");
+	let read_str = tmp_read_next_line(&mut socket)?;
+	println!("{}", read_str);
+	let deserialised = serde_json::from_str::<ServerMessage>(&read_str)?;
+	println!("{:?}", deserialised);
 	drop(socket);
 
 	// let rt = twilight_bot_utils::rt::make_tokio_runtime();

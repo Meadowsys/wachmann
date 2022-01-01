@@ -4,7 +4,7 @@ import fs from "fs";
 import net from "net";
 import { arangojs } from "arangojs";
 import { get_env } from "./env";
-import type { ReadyMessage } from "./server-messages";
+import { create_handle_data } from "./handlers";
 
 let env = get_env();
 
@@ -20,7 +20,6 @@ let db = arangojs({
 const sock_path = "db_service.sock";
 if (fs.existsSync(sock_path)) {
 	console.log("Error: `db_service.sock` already in use, database connector will not start up. if no service is running on `db_service.sock`, then `rm db_service.sock` and start this server again");
-	console.log("if no service is running on `db_service.sock`, then `rm db_service.sock` and start this server again");
 	process.exit(1);
 }
 
@@ -37,10 +36,10 @@ let {
 	decrement_connections
 } = create_connection_incrementer();
 
-function handle_connection(connection: net.Socket) {
+async function handle_connection(connection: net.Socket) {
 	increment_connections();
 
-	let { handle_data, write } = create_handle_data(connection);
+	let { handle_data, write } = await create_handle_data(connection, db);
 
 	connection.on("data", handle_data);
 
@@ -53,34 +52,7 @@ function handle_connection(connection: net.Socket) {
 		decrement_connections();
 	});
 
-	let msg: ReadyMessage = {
-		message: "ready"
-	};
-	write(msg);
-}
-
-function create_handle_data(
-	connection: net.Socket
-) {
-	let newline_buf = Buffer.from("\n");
-
-	return { write, handle_data };
-
-	function write<T>(data: Buffer | string | T): Promise<void> {
-		return new Promise((res, rej) => {
-			let buf = typeof data === "string" || Buffer.isBuffer(data)
-				? Buffer.from(data)
-				: Buffer.from(JSON.stringify(data));
-			connection.write(
-				Buffer.concat([buf, newline_buf]),
-				err => err ? rej(err) : res()
-			);
-		});
-	}
-
-	function handle_data(data: Buffer) {
-		console.log(data.toString());
-	}
+	write({ message: "ready" });
 }
 
 function create_connection_incrementer() {

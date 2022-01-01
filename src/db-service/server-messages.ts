@@ -14,8 +14,15 @@ export const test_data_message = object({
 	data: string()
 });
 
+export type ErrorMessage = z.infer<typeof error_message>;
+export const error_message = object({
+	message: literal("error"),
+	error: string()
+});
+
 export type ServerMessages = z.infer<typeof server_messages>;
 export const server_messages = union([
 	ready_message,
-	test_data_message
+	test_data_message,
+	error_message
 ]);
