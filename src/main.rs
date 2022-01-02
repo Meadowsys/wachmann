@@ -29,32 +29,32 @@ fn tmp_read_next_line(stream: &mut UnixStream) -> MainResult<String> {
 }
 
 fn main() -> MainResult {
-	let mut socket = UnixStream::connect("db_service.sock")
-		.map_err(|_| "could not connect to db_service.sock, wachmann will not start up. if the database connector is running, then restart it and start wachmann again")?;
-	let read_str = tmp_read_next_line(&mut socket)?;
-	println!("{}", read_str);
-	let deserialised = serde_json::from_str::<ServerMessage>(&read_str)?;
-	println!("{:?}", deserialised);
+	// let mut socket = UnixStream::connect("db_service.sock")
+	// 	.map_err(|_| "could not connect to db_service.sock, wachmann will not start up. if the database connector is running, then restart it and start wachmann again")?;
+	// let read_str = tmp_read_next_line(&mut socket)?;
+	// println!("{}", read_str);
+	// let deserialised = serde_json::from_str::<ServerMessage>(&read_str)?;
+	// println!("{:?}", deserialised);
 
-	let message = client_messages::ClientMessage::PutTestData {
-		data: "äääääääääääääääääää".into()
-	};
+	// let message = client_messages::ClientMessage::PutTestData {
+	// 	data: "äääääääääääääääääää".into()
+	// };
 
-	socket.write(serde_json::to_string(&message)?.as_bytes())?;
-	socket.write(b"\n")?;
-	println!("reading next message");
-	let read_str = tmp_read_next_line(&mut socket)?;
-	println!("{}", read_str);
-	let deserialised = serde_json::from_str::<ServerMessage>(&read_str)?;
-	println!("{:?}", deserialised);
-	drop(socket);
+	// socket.write(serde_json::to_string(&message)?.as_bytes())?;
+	// socket.write(b"\n")?;
+	// println!("reading next message");
+	// let read_str = tmp_read_next_line(&mut socket)?;
+	// println!("{}", read_str);
+	// let deserialised = serde_json::from_str::<ServerMessage>(&read_str)?;
+	// println!("{:?}", deserialised);
+	// drop(socket);
 
-	// let rt = twilight_bot_utils::rt::make_tokio_runtime();
+	let rt = twilight_bot_utils::rt::make_tokio_runtime();
 
-	// rt.block_on(async_main())?;
-	// rt.shutdown_timeout(Duration::from_secs(60));
+	rt.block_on(async_main())?;
+	rt.shutdown_timeout(Duration::from_secs(60));
 
-	// println!("down!");
+	println!("down!");
 
 	Ok(())
 }
