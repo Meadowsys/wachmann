@@ -52,9 +52,6 @@ fn main() -> MainResult {
 	let rt = twilight_bot_utils::rt::make_tokio_runtime();
 
 	rt.block_on(async_main())?;
-	rt.shutdown_timeout(Duration::from_secs(60));
-
-	println!("down!");
 
 	Ok(())
 }
@@ -101,5 +98,6 @@ async fn async_main() -> MainResult {
 
 	process_events(events, http, modules).await;
 
+	println!("down!");
 	Ok(())
 }
