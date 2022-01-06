@@ -16,7 +16,7 @@ const version = JSON.parse(fs.readFileSync(path.resolve("./package.json"), "utf8
 /** @type {import("rollup").RollupOptions} */
 const config = {
 	watch: { clearScreen: false },
-	input: path.resolve("./src/db-service/index.ts"),
+	input: path.resolve("./src/index.ts"),
 	output: {
 		file: path.resolve(`./target/${production ? "release" : "debug"}/db-service.mjs`),
 		format: "es",
