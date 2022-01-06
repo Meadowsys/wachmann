@@ -1,14 +1,13 @@
 // todo remove this when wachmann is more finished
 #![allow(unused)]
 
+mod db;
 mod env;
 mod logging;
-mod client_messages;
-mod server_messages;
 
 use twilight_bot_utils::prelude::*;
 
-use server_messages::ServerMessage;
+use db::server_messages::ServerMessage;
 use std::io::Read;
 use std::io::Write;
 use std::os::unix::net::UnixStream;
