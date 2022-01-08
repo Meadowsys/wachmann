@@ -37,7 +37,6 @@ export async function create_handle_data(
 
 			let unparsed_data = residual_data.substring(0, next_newline_index);
 			residual_data = residual_data.substring(next_newline_index + 1).trimStart();
-			console.log(`processing ${unparsed_data}`);
 
 			let parse_result = client_messages.safeParse(JSON.parse(unparsed_data));
 			if (!parse_result.success) {
@@ -63,6 +62,8 @@ export async function create_handle_data(
 	}
 
 	async function handle_save_message(msg: SaveMessageMessage) {
+		// @ts-expect-error
+		delete msg.message; delete msg.id;
 		await messages_collection.save(msg)
 		write({ message: "ok" })
 	}
