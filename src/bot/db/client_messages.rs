@@ -7,12 +7,6 @@ use std::num::NonZeroU64;
 #[serde(tag = "message")]
 #[serde(rename_all = "snake_case")]
 pub enum ClientMessage {
-	PutTestData {
-		data: String
-	},
-	GetTestData {
-		id: String
-	},
 	SaveMessage {
 		#[serde(with = "super::string")]
 		id: NonZeroU64,

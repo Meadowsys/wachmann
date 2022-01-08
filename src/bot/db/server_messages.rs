@@ -8,10 +8,6 @@ use serde::Deserialize;
 pub enum ServerMessage {
 	Ready {},
 	Ok {},
-	TestData {
-		key: String,
-		data: String
-	},
 	Error {
 		error: String
 	}

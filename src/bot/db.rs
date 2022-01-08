@@ -72,7 +72,6 @@ impl DatabaseConnection {
 			let read_bytes_num = self.socket.read(&mut next_byte).await?;
 
 			if read_bytes_num == 0 { return Err(Box::new(DatabaseError::UnexpectedEndOfStream)) }
-			let eee: &str = "dsa";
 			if next_byte[0] == b'\n' { return Ok(String::from_utf8(read_bytes)?) }
 
 			read_bytes.push(next_byte[0]);
@@ -139,6 +138,8 @@ impl Database {
 	pub async fn save_message(&self, msg: &ClientMessage) -> MainResult<ServerMessage> {
 		// let ClientMessage::SaveMessage { .. } = msg else { return Err(Box::new(DatabaseError::InvalidMessage)) };
 
+		// this will be changed later, when the bot does more than just save messages to the db
+		#[allow(irrefutable_let_patterns)]
 		if let ClientMessage::SaveMessage { .. } = msg {
 			// noop
 		} else {

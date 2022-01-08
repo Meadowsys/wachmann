@@ -1,8 +1,8 @@
 import net from "net";
 import { client_messages } from "./client-messages";
-import type { GetTestDataMessage, PutTestDataMessage, SaveMessageMessage } from "./client-messages";
-import type { ServerMessages } from "./server-messages";
 import type { Database } from "arangojs";
+import type { SaveMessageMessage } from "./client-messages";
+import type { ServerMessages } from "./server-messages";
 
 export async function create_handle_data(
 	connection: net.Socket,
@@ -50,14 +50,6 @@ export async function create_handle_data(
 
 			let data = parse_result.data;
 
-			if (data.message === "get_test_data") {
-				return handle_get_test_data(data);
-			}
-
-			if (data.message === "put_test_data") {
-				return handle_put_test_data(data);
-			}
-
 			if (data.message === "save_message") {
 				return handle_save_message(data);
 			}
@@ -68,36 +60,6 @@ export async function create_handle_data(
 				error: `Unknown message: ${(data as any).message}`
 			});
 		}
-	}
-
-	async function handle_get_test_data(msg: GetTestDataMessage) {
-		// test_collection.document(msg.id);
-		console.log(JSON.stringify(msg, null, 3));
-
-		write({
-			message: "test_data",
-			data: "wefiojfweoewfijjwefjiooijoij",
-			key: "42"
-		});
-
-		handle_data();
-	}
-
-	async function handle_put_test_data(msg: PutTestDataMessage) {
-		console.log(JSON.stringify(msg, null, 3));
-
-		let document = await test_collection.save(
-			{ data: msg.data },
-			{ returnNew: true }
-		);
-
-		write({
-			message: "test_data",
-			data: document.new.data,
-			key: document._key
-		});
-
-		handle_data();
 	}
 
 	async function handle_save_message(msg: SaveMessageMessage) {

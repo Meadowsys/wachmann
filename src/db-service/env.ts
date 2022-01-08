@@ -33,7 +33,7 @@ export function get_env() {
 		arango_url,
 		arango_user,
 		arango_password,
-		arango_database,
+		arango_database
 	};
 
 	// this will error if any of the above are undefined

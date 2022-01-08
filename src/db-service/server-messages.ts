@@ -12,13 +12,6 @@ export const ok_message = object({
 	message: literal("ok")
 });
 
-export type TestDataMessage = z.infer<typeof test_data_message>;
-export const test_data_message = object({
-	message: literal("test_data"),
-	key: string(),
-	data: string()
-});
-
 export type ErrorMessage = z.infer<typeof error_message>;
 export const error_message = object({
 	message: literal("error"),
@@ -29,6 +22,5 @@ export type ServerMessages = z.infer<typeof server_messages>;
 export const server_messages = union([
 	ready_message,
 	ok_message,
-	test_data_message,
 	error_message
 ]);

@@ -1,7 +1,6 @@
 use twilight_bot_utils::prelude::*;
 use super::db::Database;
 use twilight_http::Client as HttpClient;
-use twilight_http::client::ClientBuilder as HttpClientBuilder;
 use twilight_util::link::webhook::parse;
 
 mod events;
