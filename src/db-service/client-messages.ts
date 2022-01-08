@@ -14,8 +14,18 @@ export const get_test_data_message = object({
 	id: string()
 });
 
+export type SaveMessageMessage = z.infer<typeof save_message_message>;
+export const save_message_message = object({
+	message: literal("save_message"),
+	channel_id: string(),
+	author_id: string(),
+	content: string(),
+	attachment_urls: string().array()
+});
+
 export type ClientMessages = z.infer<typeof client_messages>;
 export const client_messages = union([
 	put_test_data_message,
-	get_test_data_message
+	get_test_data_message,
+	save_message_message
 ]);

@@ -7,6 +7,7 @@ use serde::Deserialize;
 #[serde(rename_all = "snake_case")]
 pub enum ServerMessage {
 	Ready {},
+	Ok {},
 	TestData {
 		key: String,
 		data: String
