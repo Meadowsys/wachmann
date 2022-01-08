@@ -73,6 +73,7 @@ impl DatabaseConnection {
 	async fn send_message(&mut self, message: &ClientMessage) -> MainResult {
 		let stringified = serde_json::to_string(message)?;
 		self.socket.write_all(stringified.as_bytes()).await?;
+		self.socket.write_all(b"\n").await?;
 		Ok(())
 	}
 }
