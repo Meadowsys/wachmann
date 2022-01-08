@@ -6,7 +6,9 @@ function throw_no_var_found(...env_var: Array<string>): never {
 	}!`);
 }
 
-export function get_env() {
+export type Env = ReturnType<typeof _get_env>;
+
+function _get_env() {
 	let node_env = process.env.NODE_ENV;
 	if (!node_env || !(node_env === "development" || node_env === "production")) {
 		throw "check rollup config, there must be a typo in the define config for node_env";
@@ -41,4 +43,10 @@ export function get_env() {
 	let _typecheck: Record<string, string> = rv;
 
 	return rv;
+}
+
+let env: Env | undefined = undefined;
+export function get_env(): Env {
+	if (!env) env = _get_env();
+	return env;
 }
