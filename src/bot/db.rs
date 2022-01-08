@@ -93,33 +93,37 @@ impl Database {
 	}
 
 	#[inline]
-	async fn _process_query(&mut self, query: &ClientMessage, connection: &mut DatabaseConnection) -> MainResult<ServerMessage> {
-		connection.send_message(query).await?;
-		let response = connection.read_next_message().await?;
-		Ok(response)
-	}
-
-	#[inline]
-	#[async_recursion::async_recursion]
-	async fn process_query(&mut self, query: &ClientMessage) -> MainResult<ServerMessage> {
+	async fn process_query_once(&mut self, query: &ClientMessage) -> MainResult<ServerMessage> {
 		let mut connections = self.connections.lock().await;
 		let connection = connections.pop();
 		drop(connections);
-			// .unwrap_or_else(|_| DatabaseConnection::connect(&self.path).await?);
 
 		let mut connection = if let Some(c) = connection { c }
 		else { DatabaseConnection::connect(&self.path).await? };
 
-		let processed = self._process_query(query, &mut connection).await;
+		connection.send_message(query).await?;
+		let processed = connection.read_next_message().await;
 
-		if let Ok(res) = processed {
-			let mut connections = self.connections.lock().await;
-			connections.push(connection);
-			drop(connections);
-			Ok(res)
-		} else {
-			self.process_query(query).await
+		match processed {
+			Ok(res) => {
+				let mut connections = self.connections.lock().await;
+				connections.push(connection);
+				drop(connections);
+				Ok(res)
+			}
+			e => e // e
 		}
+	}
+
+	async fn process_query(&mut self, query: &ClientMessage) -> MainResult<ServerMessage> {
+		let mut result = self.process_query_once(query).await;
+
+		for _ in 0..5 {
+			if let Ok(response) = result { return Ok(response) }
+			result = self.process_query_once(query).await;
+		}
+
+		result
 	}
 }
 
