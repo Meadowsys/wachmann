@@ -1,6 +1,6 @@
 import net from "net";
 import { client_messages } from "./client-messages";
-import type { GetTestDataMessage, PutTestDataMessage } from "./client-messages";
+import type { GetTestDataMessage, PutTestDataMessage, SaveMessageMessage } from "./client-messages";
 import type { ServerMessages } from "./server-messages";
 import type { Database } from "arangojs";
 
@@ -13,6 +13,9 @@ export async function create_handle_data(
 
 	let test_collection = db.collection("test");
 	if (!await test_collection.exists()) await test_collection.create();
+
+	let messages_collection = db.collection("messages");
+	if (!await messages_collection.exists()) await messages_collection.create();
 
 	return { write, handle_data };
 
@@ -29,7 +32,6 @@ export async function create_handle_data(
 		if (data) residual_data += data.toString();
 
 		while (true) {
-			console.log(residual_data);
 			let next_newline_index = residual_data.indexOf("\n");
 			if (next_newline_index === -1) return;
 
@@ -54,6 +56,10 @@ export async function create_handle_data(
 
 			if (data.message === "put_test_data") {
 				return handle_put_test_data(data);
+			}
+
+			if (data.message === "save_message") {
+				return handle_save_message(data);
 			}
 
 			// i trust typescript and my ability to program, but also meh why not lol
@@ -92,5 +98,10 @@ export async function create_handle_data(
 		});
 
 		handle_data();
+	}
+
+	async function handle_save_message(msg: SaveMessageMessage) {
+		await messages_collection.save(msg)
+		write({ message: "ok" })
 	}
 }

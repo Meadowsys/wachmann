@@ -15,12 +15,14 @@ use tokio::sync::Mutex;
 use std::str;
 
 #[derive(Debug)]
-pub enum DatabaseConnectionError {
+pub enum DatabaseError {
 	UnexpectedEndOfStream,
-	UnexpectedConnectionError
+	UnexpectedConnectionError,
+	InvalidMessage,
+	UnexpectedMessage
 }
 
-impl fmt::Display for DatabaseConnectionError {
+impl fmt::Display for DatabaseError {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		match self {
 			Self::UnexpectedEndOfStream => {
@@ -29,11 +31,17 @@ impl fmt::Display for DatabaseConnectionError {
 			Self::UnexpectedConnectionError => {
 				write!(f, "unexpected error while connecting to database")
 			}
+			Self::InvalidMessage => {
+				write!(f, "invalid message type provided")
+			}
+			Self::UnexpectedMessage => {
+				write!(f, "unexpected message type received, unsure if successful or not")
+			}
 		}
 	}
 }
 
-impl Error for DatabaseConnectionError {}
+impl Error for DatabaseError {}
 
 struct DatabaseConnection {
 	socket: UnixStream
@@ -46,7 +54,8 @@ impl DatabaseConnection {
 
 		match connection.read_next_message().await {
 			Ok(ServerMessage::Ready { .. }) => { Ok(connection) }
-			Ok(_) | Err(_) => { Err(Box::from(DatabaseConnectionError::UnexpectedConnectionError)) }
+			Ok(_) => { Err(Box::new(DatabaseError::UnexpectedMessage)) }
+			Err(_) => { Err(Box::new(DatabaseError::UnexpectedConnectionError)) }
 		}
 	}
 
@@ -62,7 +71,7 @@ impl DatabaseConnection {
 		loop {
 			let read_bytes_num = self.socket.read(&mut next_byte).await?;
 
-			if read_bytes_num == 0 { return Err(Box::new(DatabaseConnectionError::UnexpectedEndOfStream)) }
+			if read_bytes_num == 0 { return Err(Box::new(DatabaseError::UnexpectedEndOfStream)) }
 			let eee: &str = "dsa";
 			if next_byte[0] == b'\n' { return Ok(String::from_utf8(read_bytes)?) }
 
@@ -94,7 +103,7 @@ impl Database {
 	}
 
 	#[inline]
-	async fn process_query_once(&mut self, query: &ClientMessage) -> MainResult<ServerMessage> {
+	async fn process_query_once(&self, query: &ClientMessage) -> MainResult<ServerMessage> {
 		let mut connections = self.connections.lock().await;
 		let connection = connections.pop();
 		drop(connections);
@@ -116,7 +125,7 @@ impl Database {
 		}
 	}
 
-	async fn process_query(&mut self, query: &ClientMessage) -> MainResult<ServerMessage> {
+	async fn process_query(&self, query: &ClientMessage) -> MainResult<ServerMessage> {
 		let mut result = self.process_query_once(query).await;
 
 		for _ in 0..5 {
@@ -125,6 +134,24 @@ impl Database {
 		}
 
 		result
+	}
+
+	pub async fn save_message(&self, msg: &ClientMessage) -> MainResult<ServerMessage> {
+		// let ClientMessage::SaveMessage { .. } = msg else { return Err(Box::new(DatabaseError::InvalidMessage)) };
+
+		if let ClientMessage::SaveMessage { .. } = msg {
+			// noop
+		} else {
+			return Err(Box::new(DatabaseError::InvalidMessage))
+		}
+
+		let res = self.process_query(msg).await?;
+
+		if let ServerMessage::Ok {} = res {
+			Ok(res)
+		} else {
+			Err(Box::new(DatabaseError::UnexpectedMessage))
+		}
 	}
 }
 

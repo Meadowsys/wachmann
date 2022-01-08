@@ -64,13 +64,17 @@ async fn async_main() -> MainResult {
 	let (cluster, events) = twilight_bot_utils::cluster::setup_cluster(&env, &intents).await?;
 	let current_user = twilight_bot_utils::http::get_current_user(&http).await?;
 
+	let db = db::Database::connect("db_service.sock").await?;
+	let db = Arc::new(db);
+
 	let mut modules = ModuleHandler::with_capacity(10);
 
 	modules.add_module(logging::new(
 		env_var("LOGGING_WEBHOOK")
 			.or("WEBHOOK_URL")
 			.or("WACHMANN_WEBHOOK_URL")
-			.get()
+			.get(),
+		db
 	));
 
 	#[cfg(debug_assertions)] {
