@@ -1,14 +1,16 @@
 use twilight_bot_utils::prelude::*;
 use super::db::Database;
 use twilight_http::Client as HttpClient;
+use twilight_model::user::CurrentUser;
 use twilight_util::link::webhook::parse;
 
 mod events;
 
 pub struct Logging {
 	webhook_url: String,
-	id: WebhookId,
 	token: String,
+	id: WebhookId,
+	current_user: CurrentUser,
 	channel_id: ChannelId,
 	db: Arc<Database>
 }
@@ -23,8 +25,24 @@ impl Logging {
 	pub fn new(webhook_url: String, db: Arc<Database>) -> Self {
 		Self {
 			webhook_url,
-			id: WebhookId::new(1).expect("non zero"),
 			token: String::new(),
+			id: WebhookId::new(1).expect("non zero"),
+			current_user: CurrentUser {
+				accent_color: None,
+				avatar: None,
+				banner: None,
+				bot: false,
+				discriminator: 0,
+				email: None,
+				id: UserId::new(1).expect("non zero"),
+				mfa_enabled: false,
+				name: "not initialised".to_owned(),
+				verified: None,
+				premium_type: None,
+				public_flags: None,
+				flags: None,
+				locale: None
+			},
 			channel_id: ChannelId::new(1).expect("non zero"),
 			db
 		}
@@ -54,6 +72,7 @@ impl Module for Logging {
 
 		self.id = id;
 		self.token = token.ok_or("webhook token missing")?.into();
+		self.current_user = stuff.current_user.clone();
 
 		self.channel_id = stuff.http.webhook(id)
 			.exec().await?
