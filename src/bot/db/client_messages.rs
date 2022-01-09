@@ -16,5 +16,9 @@ pub enum ClientMessage {
 		author_id: NonZeroU64,
 		content: String,
 		attachment_urls: Vec<String>
+	},
+	GetMessage {
+		#[serde(with = "super::string")]
+		id: NonZeroU64
 	}
 }

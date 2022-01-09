@@ -1,7 +1,8 @@
 import net from "net";
 import { client_messages } from "./client-messages";
+import { message_message } from "./server-messages";
 import type { Database } from "arangojs";
-import type { SaveMessageMessage } from "./client-messages";
+import type { SaveMessageMessage, GetMessageMessage } from "./client-messages";
 import type { ServerMessages } from "./server-messages";
 
 export async function create_handle_data(
@@ -52,6 +53,9 @@ export async function create_handle_data(
 			if (data.message === "save_message") {
 				return handle_save_message(data);
 			}
+			if (data.message = "get_message") {
+				return handle_get_message(data);
+			}
 
 			// i trust typescript and my ability to program, but also meh why not lol
 			write({
@@ -61,10 +65,31 @@ export async function create_handle_data(
 		}
 	}
 
-	async function handle_save_message(msg: SaveMessageMessage) {
+	async function handle_save_message(query: SaveMessageMessage) {
 		// @ts-expect-error
-		delete msg.message; delete msg.id;
-		await messages_collection.save(msg)
-		write({ message: "ok" })
+		delete query.message; delete query.id;
+		await messages_collection.save(query);
+		write({ message: "ok" });
+	}
+
+	async function handle_get_message(query: GetMessageMessage) {
+		let msg = await messages_collection.document(
+			{ _key: query.id },
+			{ graceful: true }
+		);
+
+		if (!msg) return void write({ message: "no_message" });
+
+		let msg_parse_result = message_message.safeParse({
+			message: "message",
+			...msg,
+			id: msg._key
+		});
+		if (!msg_parse_result.success) return void write({
+			message: "error",
+			error: JSON.stringify(msg_parse_result.error.format())
+		});
+
+		write(msg_parse_result.data);
 	}
 }

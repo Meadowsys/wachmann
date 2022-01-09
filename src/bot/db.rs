@@ -138,8 +138,6 @@ impl Database {
 	pub async fn save_message(&self, msg: &ClientMessage) -> MainResult<ServerMessage> {
 		// let ClientMessage::SaveMessage { .. } = msg else { return Err(Box::new(DatabaseError::InvalidMessage)) };
 
-		// this will be changed later, when the bot does more than just save messages to the db
-		#[allow(irrefutable_let_patterns)]
 		if let ClientMessage::SaveMessage { .. } = msg {
 			// noop
 		} else {
@@ -149,6 +147,26 @@ impl Database {
 		let res = self.process_query(msg).await?;
 
 		if let ServerMessage::Ok {} = res {
+			Ok(res)
+		} else {
+			Err(Box::new(DatabaseError::UnexpectedMessage))
+		}
+	}
+
+	pub async fn get_message(&self, msg: &ClientMessage) -> MainResult<ServerMessage> {
+		// let ClientMessage::GetMessage { .. } = msg else { return Err(Box::new(DatabaseError::InvalidMessage)) };
+
+		if let ClientMessage::GetMessage { .. } = msg {
+			// noop
+		} else {
+			return Err(Box::new(DatabaseError::InvalidMessage))
+		}
+
+		let res = self.process_query(msg).await?;
+
+		if let ServerMessage::Message { .. } = res {
+			Ok(res)
+		} else if let ServerMessage::NoMessage {} = res {
 			Ok(res)
 		} else {
 			Err(Box::new(DatabaseError::UnexpectedMessage))
