@@ -10,7 +10,6 @@ pub trait ClientMessage: Serialize {}
 
 #[derive(Serialize, Debug)]
 pub enum SaveMessageTag { #[serde(rename = "save_message")] Tag }
-
 #[derive(Serialize, Debug)]
 pub struct SaveMessage {
 	pub message: SaveMessageTag,
@@ -27,7 +26,6 @@ impl ClientMessage for SaveMessage {}
 
 #[derive(Serialize, Debug)]
 pub enum GetMessageTag { #[serde(rename = "get_message")] Tag }
-
 #[derive(Serialize, Debug)]
 pub struct GetMessage {
 	pub message: GetMessageTag,

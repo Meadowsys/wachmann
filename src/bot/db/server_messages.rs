@@ -11,7 +11,6 @@ pub trait ServerMessage: DeserializeOwned {}
 
 #[derive(Deserialize, Debug)]
 pub enum ReadyTag { #[serde(rename = "ready")] Tag }
-
 #[derive(Deserialize, Debug)]
 pub struct Ready {
 	pub message: ReadyTag
@@ -20,7 +19,6 @@ impl ServerMessage for Ready {}
 
 #[derive(Deserialize, Debug)]
 pub enum OkTag { #[serde(rename = "ok")] Tag }
-
 #[derive(Deserialize, Debug)]
 pub struct Ok {
 	pub message: OkTag
@@ -29,7 +27,6 @@ impl ServerMessage for Ok {}
 
 #[derive(Deserialize, Debug)]
 pub enum ErrorTag { #[serde(rename = "error")] Tag }
-
 #[derive(Deserialize, Debug)]
 pub struct Error {
 	pub error: String
@@ -38,7 +35,6 @@ impl ServerMessage for Error {}
 
 #[derive(Deserialize, Debug)]
 pub enum MessageTag { #[serde(rename = "message")] Tag }
-
 #[derive(Deserialize, Debug)]
 pub struct Message {
 	pub message: MessageTag,
@@ -55,7 +51,6 @@ impl ServerMessage for Message {}
 
 #[derive(Deserialize, Debug)]
 pub enum NoMessageTag { #[serde(rename = "no_message")] Tag }
-
 #[derive(Deserialize, Debug)]
 pub struct NoMessage {
 	pub message: NoMessageTag
