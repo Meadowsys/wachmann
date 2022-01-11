@@ -1,7 +1,7 @@
 use twilight_bot_utils::prelude::*;
 
 use crate::bot::db::Database;
-use crate::bot::db::client_messages::ClientMessage;
+use crate::bot::db::client_messages;
 use twilight_model::gateway::payload::incoming::MessageCreate;
 
 pub async fn handle(msg: Box<MessageCreate>, db: &Arc<Database>) -> MainResult {
@@ -20,7 +20,10 @@ pub async fn handle(msg: Box<MessageCreate>, db: &Arc<Database>) -> MainResult {
 		.replace(']', "\\]")
 		.replace('_', "\\_");
 
-	db.save_message(&ClientMessage::SaveMessage { id, channel_id, author_id, content, attachment_urls }).await?;
+	db.save_message(&client_messages::SaveMessage {
+		id, channel_id, author_id, content, attachment_urls,
+		message: client_messages::SaveMessageTag::Tag
+	}).await?;
 
 	Ok(())
 }

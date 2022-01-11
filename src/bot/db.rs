@@ -8,7 +8,6 @@ use server_messages::ServerMessage;
 use twilight_bot_utils::prelude::tokio::io::AsyncWriteExt;
 use std::error::Error;
 use std::fmt;
-use std::sync::Arc;
 use tokio::net::UnixStream;
 use tokio::io::AsyncReadExt;
 use tokio::sync::Mutex;
@@ -18,8 +17,8 @@ use std::str;
 pub enum DatabaseError {
 	UnexpectedEndOfStream,
 	UnexpectedConnectionError,
-	InvalidMessage,
-	UnexpectedMessage
+	// InvalidMessage,
+	// UnexpectedMessage
 }
 
 impl fmt::Display for DatabaseError {
@@ -31,12 +30,12 @@ impl fmt::Display for DatabaseError {
 			Self::UnexpectedConnectionError => {
 				write!(f, "unexpected error while connecting to database")
 			}
-			Self::InvalidMessage => {
-				write!(f, "invalid message type provided")
-			}
-			Self::UnexpectedMessage => {
-				write!(f, "unexpected message type received, unsure if successful or not")
-			}
+			// Self::InvalidMessage => {
+			// 	write!(f, "invalid message type provided")
+			// }
+			// Self::UnexpectedMessage => {
+			// 	write!(f, "unexpected message type received, unsure if successful or not")
+			// }
 		}
 	}
 }
@@ -52,14 +51,13 @@ impl DatabaseConnection {
 		let socket = UnixStream::connect(path).await?;
 		let mut connection = Self { socket };
 
-		match connection.read_next_message().await {
-			Ok(ServerMessage::Ready { .. }) => { Ok(connection) }
-			Ok(_) => { Err(Box::new(DatabaseError::UnexpectedMessage)) }
+		match connection.read_next_message::<server_messages::Ready>().await {
+			Ok(_) => { Ok(connection) }
 			Err(_) => { Err(Box::new(DatabaseError::UnexpectedConnectionError)) }
 		}
 	}
 
-	pub async fn read_next_message(&mut self) -> MainResult<ServerMessage> {
+	pub async fn read_next_message<T: ServerMessage>(&mut self) -> MainResult<T> {
 		let line = self.read_next_line().await?;
 		Ok(serde_json::from_str(&line)?)
 	}
@@ -78,7 +76,7 @@ impl DatabaseConnection {
 		}
 	}
 
-	async fn send_message(&mut self, message: &ClientMessage) -> MainResult {
+	async fn send_message<T: ClientMessage>(&mut self, message: &T) -> MainResult {
 		let stringified = serde_json::to_string(message)?;
 		self.socket.write_all(stringified.as_bytes()).await?;
 		self.socket.write_all(b"\n").await?;
@@ -88,7 +86,7 @@ impl DatabaseConnection {
 
 pub struct Database {
 	path: String,
-	connections: Arc<Mutex<Vec<DatabaseConnection>>>
+	connections: Mutex<Vec<DatabaseConnection>>
 }
 
 impl Database {
@@ -96,13 +94,13 @@ impl Database {
 		// connect our first socket to test the connection
 		let db_connection = DatabaseConnection::connect(path).await?;
 		Ok(Database {
-			connections: Arc::new(Mutex::new(vec![db_connection])),
+			connections: Mutex::new(vec![db_connection]),
 			path: path.into()
 		})
 	}
 
 	#[inline]
-	async fn process_query_once(&self, query: &ClientMessage) -> MainResult<ServerMessage> {
+	async fn process_query_once<T: ClientMessage, R: ServerMessage>(&self, query: &T) -> MainResult<R> {
 		let mut connections = self.connections.lock().await;
 		let connection = connections.pop();
 		drop(connections);
@@ -124,7 +122,7 @@ impl Database {
 		}
 	}
 
-	async fn process_query(&self, query: &ClientMessage) -> MainResult<ServerMessage> {
+	async fn process_query<T: ClientMessage, R: ServerMessage>(&self, query: &T) -> MainResult<R> {
 		let mut result = self.process_query_once(query).await;
 
 		for _ in 0..5 {
@@ -135,43 +133,16 @@ impl Database {
 		result
 	}
 
-	pub async fn save_message(&self, msg: &ClientMessage) -> MainResult<ServerMessage> {
-		// let ClientMessage::SaveMessage { .. } = msg else { return Err(Box::new(DatabaseError::InvalidMessage)) };
-
-		if let ClientMessage::SaveMessage { .. } = msg {
-			// noop
-		} else {
-			return Err(Box::new(DatabaseError::InvalidMessage))
-		}
-
-		let res = self.process_query(msg).await?;
-
-		if let ServerMessage::Ok {} = res {
-			Ok(res)
-		} else {
-			Err(Box::new(DatabaseError::UnexpectedMessage))
-		}
+	#[inline]
+	pub async fn save_message(&self, msg: &client_messages::SaveMessage) -> MainResult<server_messages::Ok> {
+		self.process_query(msg).await
 	}
 
-	pub async fn get_message(&self, msg: &ClientMessage) -> MainResult<ServerMessage> {
-		// let ClientMessage::GetMessage { .. } = msg else { return Err(Box::new(DatabaseError::InvalidMessage)) };
-
-		if let ClientMessage::GetMessage { .. } = msg {
-			// noop
-		} else {
-			return Err(Box::new(DatabaseError::InvalidMessage))
-		}
-
-		let res = self.process_query(msg).await?;
-
-		if let ServerMessage::Message { .. } = res {
-			Ok(res)
-		} else if let ServerMessage::NoMessage {} = res {
-			Ok(res)
-		} else {
-			Err(Box::new(DatabaseError::UnexpectedMessage))
-		}
-	}
+	// #[inline]
+	// pub async fn get_message(&self, msg: &client_messages::GetMessage) -> MainResult<server_messages::Message> {
+	// 	self.process_query(msg).await
+	// 	// todo this needs changing, since can also return NoMessage
+	// }
 }
 
 /// almost straight copy/paste from twilight_model/src/id.rs

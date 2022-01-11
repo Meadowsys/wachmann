@@ -12,9 +12,6 @@ export async function create_handle_data(
 	const newline_buf = Buffer.from("\n");
 	let residual_data = "";
 
-	let test_collection = db.collection("test");
-	if (!await test_collection.exists()) await test_collection.create();
-
 	let messages_collection = db.collection("messages");
 	if (!await messages_collection.exists()) await messages_collection.create();
 
