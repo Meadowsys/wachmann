@@ -100,26 +100,40 @@ impl Database {
 	}
 
 	#[inline]
-	async fn process_query_once<T: ClientMessage, R: ServerMessage>(&self, query: &T) -> MainResult<R> {
+	async fn get_connection(&self) -> MainResult<DatabaseConnection> {
 		let mut connections = self.connections.lock().await;
 		let connection = connections.pop();
 		drop(connections);
 
-		let mut connection = if let Some(c) = connection { c }
-		else { DatabaseConnection::connect(&self.path).await? };
+		let connection = if let Some(con) = connection {
+			con
+		} else {
+			DatabaseConnection::connect(&self.path).await?
+		};
+
+		Ok(connection)
+	}
+
+	#[inline]
+	async fn return_connection(&self, connection: DatabaseConnection) {
+		let mut connections = self.connections.lock().await;
+		connections.push(connection);
+	}
+
+	#[inline]
+	async fn process_query_once<T: ClientMessage, R: ServerMessage>(&self, query: &T) -> MainResult<R> {
+		let mut connection = self.get_connection().await?;
 
 		connection.send_message(query).await?;
 		let processed = connection.read_next_message().await;
 
-		match processed {
-			Ok(res) => {
-				let mut connections = self.connections.lock().await;
-				connections.push(connection);
-				drop(connections);
-				Ok(res)
-			}
-			e => e // e
+		if let Ok(_) = processed {
+			self.return_connection(connection);
 		}
+		// if it errored, i suppose it might be something with that connection?
+		// so don't return it and let it drop/disconnect
+
+		processed
 	}
 
 	async fn process_query<T: ClientMessage, R: ServerMessage>(&self, query: &T) -> MainResult<R> {
