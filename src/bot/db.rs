@@ -165,7 +165,7 @@ impl Database {
 		let processed = connection.read_next_message().await;
 
 		if let Ok(_) = processed {
-			self.return_connection(connection);
+			self.return_connection(connection).await;
 		}
 		// if it errored, i suppose it might be something with that connection?
 		// so don't return it and let it drop/disconnect
