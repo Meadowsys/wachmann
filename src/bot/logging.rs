@@ -50,6 +50,7 @@ impl Logging {
 }
 
 impl Logging {
+	#[allow(dead_code)]
 	pub fn send(&self, http: &Arc<HttpClient>, message: String) -> impl Future<Output = MainResult> {
 		let http = Arc::clone(http);
 		let id = self.id;

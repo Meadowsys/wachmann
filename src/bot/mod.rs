@@ -33,11 +33,11 @@ async fn async_main() -> MainResult {
 	));
 
 	#[cfg(debug_assertions)] {
-		// debug-specific modules
+		// debug-specific things
 	}
 
 	#[cfg(not(debug_assertions))] {
-		// production-specific modules
+		// production-specific things
 	}
 
 	let modules = modules

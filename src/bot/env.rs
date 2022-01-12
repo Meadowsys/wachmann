@@ -22,6 +22,7 @@
 ///
 /// No idea if it can pull values from `self`, that would be interesting but also
 /// that is not supported, and not the point of this macro lol
+#[allow(unused_macros)]
 macro_rules! id {
 	(name: $name:ident, type: $type:ident, development: $dev:expr, production: $prod:expr) => {
 		// development

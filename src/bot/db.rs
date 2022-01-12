@@ -124,7 +124,6 @@ impl Database {
 		connections.push(connection);
 	}
 
-	#[inline]
 	async fn process_query_no_parse_once<T>(&self, query: &T) -> MainResult<String>
 	where
 		T: ClientMessage
@@ -143,6 +142,7 @@ impl Database {
 		response
 	}
 
+	#[inline]
 	async fn process_query_no_parse<T>(&self, query: &T)-> MainResult<String>
 	where
 		T: ClientMessage
@@ -157,8 +157,11 @@ impl Database {
 		response
 	}
 
-	#[inline]
-	async fn process_query_once<T: ClientMessage, R: ServerMessage>(&self, query: &T) -> MainResult<R> {
+	async fn process_query_once<T, R>(&self, query: &T) -> MainResult<R>
+	where
+		T: ClientMessage,
+		R: ServerMessage
+	{
 		let mut connection = self.get_connection().await?;
 
 		connection.send_message(query).await?;
@@ -173,7 +176,12 @@ impl Database {
 		processed
 	}
 
-	async fn process_query<T: ClientMessage, R: ServerMessage>(&self, query: &T) -> MainResult<R> {
+	#[inline]
+	async fn process_query<T, R>(&self, query: &T) -> MainResult<R>
+	where
+		T: ClientMessage,
+		R: ServerMessage
+	{
 		let mut result = self.process_query_once(query).await;
 
 		for _ in 0..5 {
@@ -185,7 +193,9 @@ impl Database {
 	}
 
 	#[inline]
-	pub async fn save_message(&self, msg: &client_messages::SaveMessage) -> MainResult<server_messages::Ok> {
+	pub async fn save_message(&self, msg: &client_messages::SaveMessage)
+		-> MainResult<server_messages::Ok>
+	{
 		self.process_query(msg).await
 	}
 
