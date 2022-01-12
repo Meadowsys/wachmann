@@ -94,11 +94,11 @@ impl Module for Logging {
 			}
 
 			MessageUpdate(msg) => {
-				// if self.channel_id == msg.channel_id { return Ok(()) }
-				// if let Some(ref author) = msg.author {
-				// 	if self.current_user.id == author.id { return Ok(()) }
-				// } else { return Ok(()) }
-				// events::message_update::handle(msg, &self.db).await?;
+				if self.channel_id == msg.channel_id { return Ok(()) }
+				if let Some(ref author) = msg.author {
+					if self.current_user.id == author.id { return Ok(()) }
+				} else { return Ok(()) }
+				events::message_update::handle(msg, &self.db).await?;
 			}
 
 			// unused events

@@ -62,7 +62,7 @@ impl DatabaseConnection {
 		Ok(serde_json::from_str(&line)?)
 	}
 
-	async fn read_next_line(&mut self) -> MainResult<String> {
+	pub async fn read_next_line(&mut self) -> MainResult<String> {
 		let mut next_byte = [0u8; 1];
 		let mut read_bytes = vec![];
 
@@ -93,8 +93,12 @@ impl Database {
 	pub async fn connect(path: &str) -> MainResult<Self> {
 		// connect our first socket to test the connection
 		let db_connection = DatabaseConnection::connect(path).await?;
+
+		let mut vec = Vec::with_capacity(3);
+		vec.push(db_connection);
+
 		Ok(Database {
-			connections: Mutex::new(vec![db_connection]),
+			connections: Mutex::new(vec),
 			path: path.into()
 		})
 	}
@@ -118,6 +122,39 @@ impl Database {
 	async fn return_connection(&self, connection: DatabaseConnection) {
 		let mut connections = self.connections.lock().await;
 		connections.push(connection);
+	}
+
+	#[inline]
+	async fn process_query_no_parse_once<T>(&self, query: &T) -> MainResult<String>
+	where
+		T: ClientMessage
+	{
+		let mut connection = self.get_connection().await?;
+
+		connection.send_message(query).await?;
+		let response = connection.read_next_line().await;
+
+		if let Ok(_) = response {
+			self.return_connection(connection).await;
+		}
+		// if it errored, i suppose it might be something with that connection?
+		// so don't return it and let it drop/disconnect
+
+		response
+	}
+
+	async fn process_query_no_parse<T>(&self, query: &T)-> MainResult<String>
+	where
+		T: ClientMessage
+	{
+		let mut response = self.process_query_no_parse_once(query).await;
+
+		for _ in 0..5 {
+			if let Ok(_) = response { return response }
+			response = self.process_query_no_parse_once(query).await;
+		}
+
+		response
 	}
 
 	#[inline]
@@ -152,11 +189,22 @@ impl Database {
 		self.process_query(msg).await
 	}
 
-	// #[inline]
-	// pub async fn get_message(&self, msg: &client_messages::GetMessage) -> MainResult<server_messages::Message> {
-	// 	self.process_query(msg).await
-	// 	// todo this needs changing, since can also return NoMessage
-	// }
+	#[inline]
+	pub async fn get_message(&self, msg: &client_messages::GetMessage)
+		-> MainResult<Option<server_messages::Message>>
+	{
+		let str_res = self.process_query_no_parse(msg).await?;
+		match serde_json::from_str::<server_messages::Message>(&str_res) {
+			Ok(res) => { Ok(Some(res)) }
+			Err(e) => {
+				let no_msg_res = serde_json::from_str::<server_messages::NoMessage>(&str_res);
+				match no_msg_res {
+					Ok(_) => { Ok(None) }
+					Err(_) => { Err(Box::new(e)) }
+				}
+			}
+		}
+	}
 }
 
 /// almost straight copy/paste from twilight_model/src/id.rs

@@ -1,13 +1,15 @@
 use twilight_bot_utils::prelude::*;
 
 use crate::bot::db::Database;
-use crate::bot::db::client_messages::ClientMessage;
+use crate::bot::db::client_messages;
 use twilight_model::gateway::payload::incoming::MessageUpdate;
 
 pub async fn handle(new_msg: Box<MessageUpdate>, db: &Arc<Database>) -> MainResult {
+	println!("message update");
 	// println!("{:?}", new_msg.content);
-	let old_msg = db.get_message(&ClientMessage::GetMessage {
-		id: new_msg.id.0
+	let old_msg = db.get_message(&client_messages::GetMessage {
+		id: new_msg.id.0,
+		message: client_messages::GetMessageTag::Tag
 	}).await?;
 	println!("{:?}", old_msg);
 	println!("done");
