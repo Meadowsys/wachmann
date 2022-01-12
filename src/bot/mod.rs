@@ -1,6 +1,3 @@
-// todo remove this when wachmann is more finished
-#![allow(unused)]
-
 mod db;
 mod env;
 mod logging;
