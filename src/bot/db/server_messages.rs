@@ -3,9 +3,13 @@
 // https://github.com/serde-rs/serde/issues/760
 // workaround for now: https://github.com/serde-rs/serde/issues/760#issuecomment-499570311
 
+use twilight_bot_utils::prelude::*;
+
 use serde::Deserialize;
 use serde::de::DeserializeOwned;
-use std::num::NonZeroU64;
+use twilight_model::id::ChannelId;
+use twilight_model::id::MessageId;
+use twilight_model::id::UserId;
 
 pub trait ServerMessage: DeserializeOwned {}
 
@@ -38,12 +42,9 @@ pub enum MessageTag { #[serde(rename = "message")] Tag }
 #[derive(Deserialize, Debug)]
 pub struct Message {
 	pub message: MessageTag,
-	#[serde(with = "super::string")]
-	pub id: NonZeroU64,
-	#[serde(with = "super::string")]
-	pub channel_id: NonZeroU64,
-	#[serde(with = "super::string")]
-	pub author_id: NonZeroU64,
+	pub id: MessageId,
+	pub channel_id: ChannelId,
+	pub author_id: UserId,
 	pub content: String,
 	pub attachment_urls: Vec<String>
 }
