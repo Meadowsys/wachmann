@@ -12,7 +12,7 @@ pub async fn handle(msg: Box<MessageCreate>, db: &Arc<Database>) -> MainResult {
 
 	let content = msg.content
 		.replace('*', "\\*")
-		.replace('#', "\\#")
+		// .replace('#', "\\#") // do we really need this? it ruins the channel mentions
 		.replace('/', "\\/")
 		.replace('(', "\\(")
 		.replace(')', "\\)")
