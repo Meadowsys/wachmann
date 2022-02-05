@@ -22,7 +22,7 @@ pub async fn handle(msg: Box<MessageCreate>, db: &Arc<Database>) -> MainResult {
 
 	db.save_message(&client_messages::SaveMessage {
 		id, channel_id, author_id, content, attachment_urls,
-		message: client_messages::SaveMessageTag::Tag
+		message: client_messages::SaveMessageTag
 	}).await?;
 
 	Ok(())

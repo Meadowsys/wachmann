@@ -13,10 +13,11 @@ use twilight_model::id::UserId;
 pub trait ClientMessage: Serialize {}
 
 #[derive(Serialize, Debug)]
-pub enum SaveMessageTag { #[serde(rename = "save_message")] Tag }
+pub enum SaveMessageTagEnum { #[serde(rename = "save_message")] Tag }
+pub use SaveMessageTagEnum::Tag as SaveMessageTag;
 #[derive(Serialize, Debug)]
 pub struct SaveMessage {
-	pub message: SaveMessageTag,
+	pub message: SaveMessageTagEnum,
 	pub id: MessageId,
 	pub channel_id: ChannelId,
 	pub author_id: UserId,
@@ -26,10 +27,11 @@ pub struct SaveMessage {
 impl ClientMessage for SaveMessage {}
 
 #[derive(Serialize, Debug)]
-pub enum GetMessageTag { #[serde(rename = "get_message")] Tag }
+pub enum GetMessageTagEnum { #[serde(rename = "get_message")] Tag }
+pub use GetMessageTagEnum::Tag as GetMessageTag;
 #[derive(Serialize, Debug)]
 pub struct GetMessage {
-	pub message: GetMessageTag,
+	pub message: GetMessageTagEnum,
 	pub id: MessageId
 }
 impl ClientMessage for GetMessage {}

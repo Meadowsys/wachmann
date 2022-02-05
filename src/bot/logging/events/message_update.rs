@@ -9,7 +9,7 @@ pub async fn handle(new_msg: Box<MessageUpdate>, db: &Arc<Database>) -> MainResu
 	// println!("{:?}", new_msg.content);
 	let old_msg = db.get_message(&client_messages::GetMessage {
 		id: new_msg.id,
-		message: client_messages::GetMessageTag::Tag
+		message: client_messages::GetMessageTag
 	}).await?;
 	println!("{:?}", old_msg);
 	println!("done");
