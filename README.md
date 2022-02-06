@@ -20,7 +20,7 @@ Automated compiled builds are available on [Github Actions].
 
 ## how I setup everything
 
-The kind of useful beginners guide to installing everything needed to develop on this project, tested on macOS Monterey, written with Debian-based linux distros in mind as well with a 99.99999% chance of working on these distros, as well as a ~0% chance of working on Windows. Oh, also doesn't cover how to configure the database, because h.
+The kind of useful beginners guide to installing everything needed to develop on this project, tested on macOS Monterey aarch64 (Apple Silicon), written with Debian-based linux distros in mind as well with a 99.99999% chance of working on these distros, as well as a ~0% chance of working on Windows. Oh, it also doesn't cover how to configure the database, because h.
 
 ### node
 
@@ -121,8 +121,8 @@ rustup default 1.58.1
 
 ## building for development
 
-- start arangodb (if you don't know how, it should be running as a system service so nothing needs to be done. if you did something else you would probably know what you need to do)
-- `pnpm run dev` starts a watcher to compile the typescript code
+- start arangodb (if you didn't touch anything on install, it should be running as a system service so nothing needs to be done. if you did something else you would probably know what you need to do)
+- `pnpm run dev` starts a file watcher to compile the typescript code on change
 - `node target/debug/db-server.mjs` to start the database server connector thing
 - `cargo r` builds and runs the rust code, which connects to the typescript code (start that one first)
 
