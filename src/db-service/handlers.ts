@@ -1,6 +1,7 @@
 import net from "net";
 import { client_messages } from "./client-messages";
 import { message_message } from "./server-messages";
+import { inspect } from "util";
 import type { Database } from "arangojs";
 import type { SaveMessageMessage, GetMessageMessage } from "./client-messages";
 import type { ServerMessages } from "./server-messages";
@@ -55,10 +56,19 @@ export async function create_handle_data(
 			}
 
 			// i trust typescript and my ability to program, but also meh why not lol
+
+			// send back a response so the bot can kinda continue
 			write({
 				message: "error",
 				error: `Unknown message: ${(data as any).message}`
 			});
+
+			console.error(`UNKNOWN MESSAGE HAPPENED`);
+			console.error(inspect(data, {
+				showHidden: true,
+				depth: 1000,
+				getters: true
+			}));
 		}
 	}
 
