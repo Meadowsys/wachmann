@@ -1,0 +1,70 @@
+# milk
+
+---
+name: "CI"
+
+on:
+  push:
+    branches:
+    - "**"
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        env:
+        - rust: "1.58.1"
+          node: "16.13.2"
+          pnpm: "6.29.1"
+    name: create production build
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: checkout code
+      uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # 2.4.0
+
+    - name: install fish
+      run: |
+        sudo add-apt-repository ppa:fish-shell/release-3
+        sudo apt-get update
+        sudo apt-get install fish
+
+    - name: install dependencies
+      shell: fish {0}
+      run: |
+        # rust
+        rustup self update
+        rustup update ${{ matrix.env.rust }}
+        rustup default ${{ matrix.env.rust }}
+
+        # fisher (for nvm.fish)
+        curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher@4.3.1
+
+        # nvm.fish
+        fisher install jorgebucaran/nvm.fish@2.2.6
+
+        # node
+        nvm install ${{ matrix.node }}
+
+        # pnpm
+        curl -f https://get.pnpm.io/v6.16.js | node - i -g pnpm@${{ matrix.pnpm }}
+
+    - name: build db server
+      run: |
+        pnpm i
+        pnpm run build
+
+    - name: build wachmann
+      run: cargo b --release
+
+    - name: upload artifacts
+      uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # v2.3.1
+      with:
+        name: wachmann-release
+        path: |
+          LICENSE
+          README.md
+          target/release/wachmann
+          target/release/db-service.mjs
