@@ -33,11 +33,27 @@ export const no_message_message = object({
 	message: literal("no_message")
 });
 
+export type UserMessage = z.infer<typeof user_message>;
+export const user_message = object({
+	message: literal("user"),
+	id: string(),
+	name: string(),
+	discriminator: string(),
+	avatar_url: string().url()
+});
+
+export type NoUserMessage = z.infer<typeof no_user_message>;
+export const no_user_message = object({
+	message: literal("no_user")
+});
+
 export type ServerMessages = z.infer<typeof server_messages>;
 export const server_messages = union([
 	ready_message,
 	ok_message,
 	error_message,
 	message_message,
-	no_message_message
+	no_message_message,
+	user_message,
+	no_user_message
 ]);

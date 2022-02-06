@@ -18,8 +18,25 @@ export const get_message_message = object({
 	id: string()
 });
 
+export type SaveUserMessage = z.infer<typeof save_user_message>;
+export const save_user_message = object({
+	message: literal("save_user"),
+	id: string(),
+	name: string(),
+	discriminator: string().refine(discriminator => /^\d{4}$/.test(discriminator)),
+	avatar_url: string().url()
+});
+
+export type GetUserMessage = z.infer<typeof get_user_message>;
+export const get_user_message = object({
+	message: literal("get_user"),
+	id: string()
+});
+
 export type ClientMessages = z.infer<typeof client_messages>;
 export const client_messages = union([
 	save_message_message,
-	get_message_message
+	get_message_message,
+	save_user_message,
+	get_user_message
 ]);

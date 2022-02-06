@@ -57,3 +57,22 @@ pub struct NoMessage {
 	pub message: NoMessageTag
 }
 impl ServerMessage for NoMessage {}
+
+#[derive(Deserialize, Debug)]
+pub enum UserTag { #[serde(rename = "user")] Tag }
+#[derive(Deserialize, Debug)]
+pub struct User {
+	pub message: UserTag,
+	pub id: UserId,
+	pub name: String,
+	#[serde(with = "super::discriminator")]
+	pub discriminator: u16,
+	pub avatar_url: String
+}
+
+#[derive(Deserialize, Debug)]
+pub enum NoUserTag { #[serde(rename = "no_user")] Tag }
+#[derive(Deserialize, Debug)]
+pub struct NoUser {
+	pub message: NoUserTag
+}

@@ -35,3 +35,25 @@ pub struct GetMessage {
 	pub id: MessageId
 }
 impl ClientMessage for GetMessage {}
+
+#[derive(Serialize, Debug)]
+pub enum SaveUserMessageTagEnum { #[serde(rename = "save_user_message")] Tag }
+pub use SaveUserMessageTagEnum::Tag as SaveUserMessageTag;
+#[derive(Serialize, Debug)]
+pub struct SaveUserMessage {
+	pub message: SaveUserMessageTagEnum,
+	pub id: UserId,
+	pub name: String,
+	#[serde(with = "super::discriminator")]
+	pub discriminator: u16
+}
+impl ClientMessage for SaveUserMessage {}
+
+#[derive(Serialize, Debug)]
+pub enum GetUserMessageTagEnum { #[serde(rename = "get_user_message")] Tag }
+pub use GetUserMessageTagEnum::Tag as GetUserMessageTag;
+#[derive(Serialize, Debug)]
+pub struct GetUserMessage {
+	pub message: GetUserMessageTagEnum,
+	pub id: UserId
+}
