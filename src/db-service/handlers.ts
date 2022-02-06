@@ -50,7 +50,7 @@ export async function create_handle_data(
 			if (data.message === "save_message") {
 				return handle_save_message(data);
 			}
-			if (data.message = "get_message") {
+			if (data.message === "get_message") {
 				return handle_get_message(data);
 			}
 
