@@ -103,7 +103,9 @@ const config = {
 		}),
 
 		// shebang
-		shebang(),
+		shebang({
+			shebang: "#!/usr/bin/env node"
+		}),
 
 		// send notifications in dev mode
 		!production && notify({ success: true })
