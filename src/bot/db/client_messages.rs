@@ -54,3 +54,4 @@ pub struct GetUserMessage {
 	pub message: GetUserMessageTagEnum,
 	pub id: Id::<UserMarker>
 }
+impl ClientMessage for GetUserMessage {}

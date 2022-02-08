@@ -25,7 +25,7 @@ export const save_user_message = object({
 	name: string(),
 	discriminator: string().refine(discriminator => /^\d{4}$/.test(discriminator)),
 	avatar_url: string().url()
-});
+}).transform(msg => ({ ...msg, _key: msg.id }));
 
 export type GetUserMessage = z.infer<typeof get_user_message>;
 export const get_user_message = object({

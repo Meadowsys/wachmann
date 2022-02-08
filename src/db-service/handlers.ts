@@ -1,9 +1,9 @@
 import net from "net";
 import { client_messages } from "./client-messages";
-import { message_message } from "./server-messages";
+import { message_message, user_message } from "./server-messages";
 import { inspect } from "util";
 import type { Database } from "arangojs";
-import type { SaveMessageMessage, GetMessageMessage } from "./client-messages";
+import type { SaveMessageMessage, GetMessageMessage, SaveUserMessage, GetUserMessage } from "./client-messages";
 import type { ServerMessages } from "./server-messages";
 
 export async function create_handle_data(
@@ -13,8 +13,11 @@ export async function create_handle_data(
 	const newline_buf = Buffer.from("\n");
 	let residual_data = "";
 
-	let messages_collection = db.collection("messages");
+	const messages_collection = db.collection<Record<string, unknown>>("messages");
 	if (!await messages_collection.exists()) await messages_collection.create();
+
+	const users_collection = db.collection<Record<string, unknown>>("users");
+	if (!await users_collection.exists()) await users_collection.create();
 
 	return { write, handle_data };
 
@@ -53,6 +56,12 @@ export async function create_handle_data(
 			}
 			if (data.message === "get_message") {
 				return handle_get_message(data);
+			}
+			if (data.message === "save_user") {
+				return handle_save_user(data);
+			}
+			if (data.message === "get_user") {
+				return handle_get_user(data);
 			}
 
 			// i trust typescript and my ability to program, but also meh why not lol
@@ -98,5 +107,33 @@ export async function create_handle_data(
 		});
 
 		write(msg_parse_result.data);
+	}
+
+	async function handle_save_user(query: SaveUserMessage) {
+		// @ts-expect-error
+		delete query.message; delete query.id;
+		await users_collection.save(query);
+		write({ message: "ok" });
+	}
+
+	async function handle_get_user(query: GetUserMessage) {
+		let user = await users_collection.document(
+			{ _key: query.id },
+			{ graceful: true }
+		);
+
+		if (!user) return void write({ message: "no_user" });
+
+		let user_parse_result = user_message.safeParse({
+			message: "user",
+			...user,
+			id: user._key
+		});
+		if (!user_parse_result.success) return void write({
+			message: "error",
+			error: JSON.stringify(user_parse_result.error.format())
+		});
+
+		write(user_parse_result.data);
 	}
 }

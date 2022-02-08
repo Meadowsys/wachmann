@@ -215,6 +215,27 @@ impl Database {
 			}
 		}
 	}
+
+	#[inline]
+	pub async fn save_user(&self, msg: &client_messages::SaveUserMessage)
+		-> MainResult<server_messages::Ok>
+	{
+		self.process_query(msg).await
+	}
+
+	#[inline]
+	pub async fn get_user(&self, msg: &client_messages::GetUserMessage)
+		-> MainResult<Option<server_messages::User>>
+	{
+		let str_res = self.process_query_no_parse(msg).await?;
+		match serde_json::from_str::<server_messages::User>(&str_res) {
+			Ok(res) => { Ok(Some(res)) }
+			Err(e) => match serde_json::from_str::<server_messages::NoUser>(&str_res) {
+				Ok(_) => { Ok(None) }
+				Err(_) => { Err(Box::new(e)) }
+			}
+		}
+	}
 }
 
 // copy pasted from twilight_model/src/user/mod.rs
