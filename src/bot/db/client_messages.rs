@@ -4,14 +4,11 @@
 // workaround for now: https://github.com/serde-rs/serde/issues/760#issuecomment-499570311
 
 use twilight_bot_utils::prelude::*;
-
 use serde::Serialize;
 
 pub trait ClientMessage: Serialize {}
 
-#[derive(Serialize, Debug)]
-pub enum SaveMessageTagEnum { #[serde(rename = "save_message")] Tag }
-pub use SaveMessageTagEnum::Tag as SaveMessageTag;
+
 #[derive(Serialize, Debug)]
 pub struct SaveMessage {
 	pub message: SaveMessageTagEnum,
@@ -21,37 +18,43 @@ pub struct SaveMessage {
 	pub content: String,
 	pub attachment_urls: Vec<String>
 }
+#[derive(Serialize, Debug)]
+pub enum SaveMessageTagEnum { #[serde(rename = "save_message")] Tag }
+pub use SaveMessageTagEnum::Tag as SaveMessageTag;
 impl ClientMessage for SaveMessage {}
 
-#[derive(Serialize, Debug)]
-pub enum GetMessageTagEnum { #[serde(rename = "get_message")] Tag }
-pub use GetMessageTagEnum::Tag as GetMessageTag;
+
 #[derive(Serialize, Debug)]
 pub struct GetMessage {
 	pub message: GetMessageTagEnum,
 	pub id: Id::<MessageMarker>
 }
+#[derive(Serialize, Debug)]
+pub enum GetMessageTagEnum { #[serde(rename = "get_message")] Tag }
+pub use GetMessageTagEnum::Tag as GetMessageTag;
 impl ClientMessage for GetMessage {}
 
+
 #[derive(Serialize, Debug)]
-pub enum SaveUserMessageTagEnum { #[serde(rename = "save_user_message")] Tag }
-pub use SaveUserMessageTagEnum::Tag as SaveUserMessageTag;
-#[derive(Serialize, Debug)]
-pub struct SaveUserMessage {
-	pub message: SaveUserMessageTagEnum,
+pub struct SaveUser {
+	pub message: SaveUserTagEnum,
 	pub id: Id::<UserMarker>,
 	pub name: String,
 	#[serde(with = "super::discriminator")]
 	pub discriminator: u16
 }
-impl ClientMessage for SaveUserMessage {}
+#[derive(Serialize, Debug)]
+pub enum SaveUserTagEnum { #[serde(rename = "save_user_message")] Tag }
+pub use SaveUserTagEnum::Tag as SaveUserTag;
+impl ClientMessage for SaveUser {}
+
 
 #[derive(Serialize, Debug)]
-pub enum GetUserMessageTagEnum { #[serde(rename = "get_user_message")] Tag }
-pub use GetUserMessageTagEnum::Tag as GetUserMessageTag;
-#[derive(Serialize, Debug)]
-pub struct GetUserMessage {
-	pub message: GetUserMessageTagEnum,
+pub struct GetUser {
+	pub message: GetUserTagEnum,
 	pub id: Id::<UserMarker>
 }
-impl ClientMessage for GetUserMessage {}
+#[derive(Serialize, Debug)]
+pub enum GetUserTagEnum { #[serde(rename = "get_user_message")] Tag }
+pub use GetUserTagEnum::Tag as GetUserTag;
+impl ClientMessage for GetUser {}

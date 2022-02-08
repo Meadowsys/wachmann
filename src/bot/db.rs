@@ -217,14 +217,14 @@ impl Database {
 	}
 
 	#[inline]
-	pub async fn save_user(&self, msg: &client_messages::SaveUserMessage)
+	pub async fn save_user(&self, msg: &client_messages::SaveUser)
 		-> MainResult<server_messages::Ok>
 	{
 		self.process_query(msg).await
 	}
 
 	#[inline]
-	pub async fn get_user(&self, msg: &client_messages::GetUserMessage)
+	pub async fn get_user(&self, msg: &client_messages::GetUser)
 		-> MainResult<Option<server_messages::User>>
 	{
 		let str_res = self.process_query_no_parse(msg).await?;
