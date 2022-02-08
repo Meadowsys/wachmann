@@ -1,9 +1,9 @@
 import net from "net";
 import { client_messages } from "./client-messages";
-import { message_message, user_message } from "./server-messages";
+import { message_parser, user_parser } from "./server-messages";
 import { inspect } from "util";
 import type { Database } from "arangojs";
-import type { SaveMessageMessage, GetMessageMessage, SaveUserMessage, GetUserMessage } from "./client-messages";
+import type { SaveMessage, GetMessage, SaveUser, GetUser } from "./client-messages";
 import type { ServerMessages } from "./server-messages";
 
 export async function create_handle_data(
@@ -81,14 +81,14 @@ export async function create_handle_data(
 		}
 	}
 
-	async function handle_save_message(query: SaveMessageMessage) {
+	async function handle_save_message(query: SaveMessage) {
 		// @ts-expect-error
 		delete query.message; delete query.id;
 		await messages_collection.save(query);
 		write({ message: "ok" });
 	}
 
-	async function handle_get_message(query: GetMessageMessage) {
+	async function handle_get_message(query: GetMessage) {
 		let msg = await messages_collection.document(
 			{ _key: query.id },
 			{ graceful: true }
@@ -96,7 +96,7 @@ export async function create_handle_data(
 
 		if (!msg) return void write({ message: "no_message" });
 
-		let msg_parse_result = message_message.safeParse({
+		let msg_parse_result = message_parser.safeParse({
 			message: "message",
 			...msg,
 			id: msg._key
@@ -109,14 +109,14 @@ export async function create_handle_data(
 		write(msg_parse_result.data);
 	}
 
-	async function handle_save_user(query: SaveUserMessage) {
+	async function handle_save_user(query: SaveUser) {
 		// @ts-expect-error
 		delete query.message; delete query.id;
 		await users_collection.save(query);
 		write({ message: "ok" });
 	}
 
-	async function handle_get_user(query: GetUserMessage) {
+	async function handle_get_user(query: GetUser) {
 		let user = await users_collection.document(
 			{ _key: query.id },
 			{ graceful: true }
@@ -124,7 +124,7 @@ export async function create_handle_data(
 
 		if (!user) return void write({ message: "no_user" });
 
-		let user_parse_result = user_message.safeParse({
+		let user_parse_result = user_parser.safeParse({
 			message: "user",
 			...user,
 			id: user._key

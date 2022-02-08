@@ -2,8 +2,8 @@
 
 import { z, literal, object, string, union } from "zod";
 
-export type SaveMessageMessage = z.infer<typeof save_message_message>;
-export const save_message_message = object({
+export type SaveMessage = z.infer<typeof save_message_parser>;
+export const save_message_parser = object({
 	message: literal("save_message"),
 	id: string(),
 	channel_id: string(),
@@ -12,14 +12,14 @@ export const save_message_message = object({
 	attachment_urls: string().array()
 }).transform(msg => ({ ...msg, _key: msg.id }));
 
-export type GetMessageMessage = z.infer<typeof get_message_message>;
-export const get_message_message = object({
+export type GetMessage = z.infer<typeof get_message_parser>;
+export const get_message_parser = object({
 	message: literal("get_message"),
 	id: string()
 });
 
-export type SaveUserMessage = z.infer<typeof save_user_message>;
-export const save_user_message = object({
+export type SaveUser = z.infer<typeof save_user_parser>;
+export const save_user_parser = object({
 	message: literal("save_user"),
 	id: string(),
 	name: string(),
@@ -27,16 +27,16 @@ export const save_user_message = object({
 	avatar_url: string().url()
 }).transform(msg => ({ ...msg, _key: msg.id }));
 
-export type GetUserMessage = z.infer<typeof get_user_message>;
-export const get_user_message = object({
+export type GetUser = z.infer<typeof get_user_parser>;
+export const get_user_parser = object({
 	message: literal("get_user"),
 	id: string()
 });
 
 export type ClientMessages = z.infer<typeof client_messages>;
 export const client_messages = union([
-	save_message_message,
-	get_message_message,
-	save_user_message,
-	get_user_message
+	save_message_parser,
+	get_message_parser,
+	save_user_parser,
+	get_user_parser
 ]);
