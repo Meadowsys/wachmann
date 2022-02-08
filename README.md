@@ -144,7 +144,9 @@ you can set them as usual, or alternatively, you can put them in a file called `
 
 ## running wachmann
 
-- `node db-server.mjs` first to start database connector service
+note: you may need to run `chmod +x wachmann` and `chmod +x db-server.mjs` the first time if the files are not marked as executable
+
+- `./db-server.mjs` first to start database connector service
 - `./wachmann` to start the bot
 
 [Galacon]: https://www.galacon.eu
