@@ -7,6 +7,7 @@ import fs from "fs";
 import path from "path";
 import license from "rollup-plugin-license";
 import notify from "rollup-plugin-notify";
+import shebang from "rollup-plugin-preserve-shebang";
 import { terser } from "rollup-plugin-terser";
 import ts from "rollup-plugin-typescript2";
 
@@ -100,6 +101,9 @@ const config = {
 				commentStyle: "ignored"
 			}
 		}),
+
+		// shebang
+		shebang(),
 
 		// send notifications in dev mode
 		!production && notify({ success: true })
