@@ -13,34 +13,38 @@ pub trait ServerMessage: DeserializeOwned {}
 
 #[derive(Deserialize, Debug)]
 pub struct Ready {
-	pub message: ReadyTag
+	pub message: ReadyTagEnum
 }
 #[derive(Deserialize, Debug)]
-pub enum ReadyTag { #[serde(rename = "ready")] Tag }
+pub enum ReadyTagEnum { #[serde(rename = "ready")] Tag }
+pub use ReadyTagEnum::Tag as ReadyTag;
 impl ServerMessage for Ready {}
 
 
 #[derive(Deserialize, Debug)]
 pub struct Ok {
-	pub message: OkTag
+	pub message: OkTagEnum
 }
 #[derive(Deserialize, Debug)]
-pub enum OkTag { #[serde(rename = "ok")] Tag }
+pub enum OkTagEnum { #[serde(rename = "ok")] Tag }
+pub use OkTagEnum::Tag as OkTag;
 impl ServerMessage for Ok {}
 
 
 #[derive(Deserialize, Debug)]
 pub struct Error {
+	pub message: ErrorTagEnum,
 	pub error: String
 }
 #[derive(Deserialize, Debug)]
-pub enum ErrorTag { #[serde(rename = "error")] Tag }
+pub enum ErrorTagEnum { #[serde(rename = "error")] Tag }
+pub use ErrorTagEnum::Tag as ErrorTag;
 impl ServerMessage for Error {}
 
 
 #[derive(Deserialize, Debug)]
 pub struct Message {
-	pub message: MessageTag,
+	pub message: MessageTagEnum,
 	pub id: Id::<MessageMarker>,
 	pub channel_id: Id::<ChannelMarker>,
 	pub author_id: Id::<UserMarker>,
@@ -48,22 +52,24 @@ pub struct Message {
 	pub attachment_urls: Vec<String>
 }
 #[derive(Deserialize, Debug)]
-pub enum MessageTag { #[serde(rename = "message")] Tag }
+pub enum MessageTagEnum { #[serde(rename = "message")] Tag }
+pub use MessageTagEnum::Tag as MessageTag;
 impl ServerMessage for Message {}
 
 
 #[derive(Deserialize, Debug)]
 pub struct NoMessage {
-	pub message: NoMessageTag
+	pub message: NoMessageTagEnum
 }
 #[derive(Deserialize, Debug)]
-pub enum NoMessageTag { #[serde(rename = "no_message")] Tag }
+pub enum NoMessageTagEnum { #[serde(rename = "no_message")] Tag }
+pub use NoMessageTagEnum::Tag as NoMessageTag;
 impl ServerMessage for NoMessage {}
 
 
 #[derive(Deserialize, Debug)]
 pub struct User {
-	pub message: UserTag,
+	pub message: UserTagEnum,
 	pub id: Id::<UserMarker>,
 	pub name: String,
 	#[serde(with = "super::discriminator")]
@@ -71,14 +77,16 @@ pub struct User {
 	pub avatar_url: String
 }
 #[derive(Deserialize, Debug)]
-pub enum UserTag { #[serde(rename = "user")] Tag }
+pub enum UserTagEnum { #[serde(rename = "user")] Tag }
+pub use UserTagEnum::Tag as UserTag;
 impl ServerMessage for User {}
 
 
 #[derive(Deserialize, Debug)]
 pub struct NoUser {
-	pub message: NoUserTag
+	pub message: NoUserTagEnum
 }
 #[derive(Deserialize, Debug)]
-pub enum NoUserTag { #[serde(rename = "no_user")] Tag }
+pub enum NoUserTagEnum { #[serde(rename = "no_user")] Tag }
+pub use NoUserTagEnum::Tag as NoUserTag;
 impl ServerMessage for NoUser {}
