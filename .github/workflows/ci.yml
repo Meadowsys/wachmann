@@ -53,6 +53,7 @@ jobs:
 
     - name: build db server
       run: |
+        nvm use ${{ matrix.env.node }}
         pnpm i
         pnpm run build
 
