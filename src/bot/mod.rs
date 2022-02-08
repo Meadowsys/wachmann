@@ -22,7 +22,14 @@ async fn async_main() -> MainResult {
 	let (cluster, events) = twilight_bot_utils::cluster::setup_cluster(&intents).await?;
 	let current_user = twilight_bot_utils::http::get_current_user(&http).await?;
 
-	let db = db::Database::connect("db_service.sock").await?;
+	let db = db::Database::connect("db_service.sock").await;
+	let db = match db {
+		Ok(db) => { db }
+		Err(ref err) => {
+			eprint!("failed to connect to db: {err:?}");
+			std::process::exit(1);
+		}
+	};
 	let db = Arc::new(db);
 
 	let mut modules = ModuleHandler::with_capacity(10);
