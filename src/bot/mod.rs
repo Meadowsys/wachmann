@@ -13,10 +13,9 @@ pub fn main() -> MainResult {
 async fn async_main() -> MainResult {
 	println!("starting up...");
 
-	let env = Env::get_env();
-	let http = twilight_bot_utils::http::setup_http(&env)?;
+	let http = twilight_bot_utils::http::setup_http()?;
 	let intents = Intents::all();
-	let (cluster, events) = twilight_bot_utils::cluster::setup_cluster(&env, &intents).await?;
+	let (cluster, events) = twilight_bot_utils::cluster::setup_cluster(&intents).await?;
 	let current_user = twilight_bot_utils::http::get_current_user(&http).await?;
 
 	let db = db::Database::connect("db_service.sock").await?;

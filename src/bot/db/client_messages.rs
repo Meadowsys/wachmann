@@ -6,9 +6,6 @@
 use twilight_bot_utils::prelude::*;
 
 use serde::Serialize;
-use twilight_model::id::ChannelId;
-use twilight_model::id::MessageId;
-use twilight_model::id::UserId;
 
 pub trait ClientMessage: Serialize {}
 
@@ -18,9 +15,9 @@ pub use SaveMessageTagEnum::Tag as SaveMessageTag;
 #[derive(Serialize, Debug)]
 pub struct SaveMessage {
 	pub message: SaveMessageTagEnum,
-	pub id: MessageId,
-	pub channel_id: ChannelId,
-	pub author_id: UserId,
+	pub id: Id::<MessageMarker>,
+	pub channel_id: Id::<ChannelMarker>,
+	pub author_id: Id::<UserMarker>,
 	pub content: String,
 	pub attachment_urls: Vec<String>
 }
@@ -32,7 +29,7 @@ pub use GetMessageTagEnum::Tag as GetMessageTag;
 #[derive(Serialize, Debug)]
 pub struct GetMessage {
 	pub message: GetMessageTagEnum,
-	pub id: MessageId
+	pub id: Id::<MessageMarker>
 }
 impl ClientMessage for GetMessage {}
 
@@ -42,7 +39,7 @@ pub use SaveUserMessageTagEnum::Tag as SaveUserMessageTag;
 #[derive(Serialize, Debug)]
 pub struct SaveUserMessage {
 	pub message: SaveUserMessageTagEnum,
-	pub id: UserId,
+	pub id: Id::<UserMarker>,
 	pub name: String,
 	#[serde(with = "super::discriminator")]
 	pub discriminator: u16
@@ -55,5 +52,5 @@ pub use GetUserMessageTagEnum::Tag as GetUserMessageTag;
 #[derive(Serialize, Debug)]
 pub struct GetUserMessage {
 	pub message: GetUserMessageTagEnum,
-	pub id: UserId
+	pub id: Id::<UserMarker>
 }

@@ -9,9 +9,9 @@ mod events;
 pub struct Logging {
 	webhook_url: String,
 	token: String,
-	id: WebhookId,
+	id: Id::<WebhookMarker>,
 	current_user: CurrentUser,
-	channel_id: ChannelId,
+	channel_id: Id::<ChannelMarker>,
 	db: Arc<Database>
 }
 
@@ -26,7 +26,7 @@ impl Logging {
 		Self {
 			webhook_url,
 			token: String::new(),
-			id: WebhookId::new(1).expect("non zero"),
+			id: Id::<WebhookMarker>::new(1),
 			current_user: CurrentUser {
 				accent_color: None,
 				avatar: None,
@@ -34,7 +34,7 @@ impl Logging {
 				bot: false,
 				discriminator: 0,
 				email: None,
-				id: UserId::new(1).expect("non zero"),
+				id: Id::<UserMarker>::new(1),
 				mfa_enabled: false,
 				name: "not initialised".to_owned(),
 				verified: None,
@@ -43,7 +43,7 @@ impl Logging {
 				flags: None,
 				locale: None
 			},
-			channel_id: ChannelId::new(1).expect("non zero"),
+			channel_id: Id::<ChannelMarker>::new(1),
 			db
 		}
 	}
@@ -58,7 +58,7 @@ impl Logging {
 
 		async move {
 			http.execute_webhook(id, &token)
-				.content(&message)
+				.content(&message)?
 				.exec().await?;
 
 			Ok(())

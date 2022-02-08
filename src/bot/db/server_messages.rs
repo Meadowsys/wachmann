@@ -7,9 +7,6 @@ use twilight_bot_utils::prelude::*;
 
 use serde::Deserialize;
 use serde::de::DeserializeOwned;
-use twilight_model::id::ChannelId;
-use twilight_model::id::MessageId;
-use twilight_model::id::UserId;
 
 pub trait ServerMessage: DeserializeOwned {}
 
@@ -42,9 +39,9 @@ pub enum MessageTag { #[serde(rename = "message")] Tag }
 #[derive(Deserialize, Debug)]
 pub struct Message {
 	pub message: MessageTag,
-	pub id: MessageId,
-	pub channel_id: ChannelId,
-	pub author_id: UserId,
+	pub id: Id::<MessageMarker>,
+	pub channel_id: Id::<ChannelMarker>,
+	pub author_id: Id::<UserMarker>,
 	pub content: String,
 	pub attachment_urls: Vec<String>
 }
@@ -63,7 +60,7 @@ pub enum UserTag { #[serde(rename = "user")] Tag }
 #[derive(Deserialize, Debug)]
 pub struct User {
 	pub message: UserTag,
-	pub id: UserId,
+	pub id: Id::<UserMarker>,
 	pub name: String,
 	#[serde(with = "super::discriminator")]
 	pub discriminator: u16,
