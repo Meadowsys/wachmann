@@ -52,15 +52,18 @@ jobs:
         curl -f https://get.pnpm.io/v6.16.js | node - i -g pnpm@${{ matrix.env.pnpm }}
 
     - name: build db server
+      shell: fish {0}
       run: |
         nvm use ${{ matrix.env.node }}
         pnpm i
         pnpm run build
 
     - name: build wachmann
+      shell: fish {0}
       run: cargo b --release
 
     - name: prepare for build artifacts
+      shell: fish {0}
       run: |
         mv target/release/wachmann .
         mv target/release/db-service.mjs .
