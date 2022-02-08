@@ -46,10 +46,10 @@ jobs:
         fisher install jorgebucaran/nvm.fish@2.2.6
 
         # node
-        nvm install ${{ matrix.node }}
+        nvm install ${{ matrix.env.node }}
 
         # pnpm
-        curl -f https://get.pnpm.io/v6.16.js | node - i -g pnpm@${{ matrix.pnpm }}
+        curl -f https://get.pnpm.io/v6.16.js | node - i -g pnpm@${{ matrix.env.pnpm }}
 
     - name: build db server
       run: |
