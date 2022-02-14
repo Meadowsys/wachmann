@@ -1,6 +1,7 @@
 mod db;
 mod env;
 mod logging;
+mod model;
 
 use twilight_bot_utils::prelude::*;
 
