@@ -4,7 +4,7 @@ use crate::bot::db::Database;
 use crate::bot::db::client_messages;
 use twilight_model::gateway::payload::incoming::MessageCreate;
 
-pub async fn handle(msg: Box<MessageCreate>, db: &Arc<Database>) -> MainResult {
+pub async fn handle(msg: &Box<MessageCreate>, db: &Arc<Database>) -> MainResult {
 	let id = msg.id;
 	let channel_id = msg.channel_id;
 	let author_id = msg.author.id;

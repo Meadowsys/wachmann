@@ -88,18 +88,18 @@ impl Module for Logging {
 		// notice for sure because the build breaks
 
 		match event.event {
-			MessageCreate(msg) => {
+			MessageCreate(ref msg) => {
 				if self.channel_id == msg.channel_id { return Ok(()) }
 				if self.current_user.id == msg.author.id { return Ok(()) }
 				events::message_create::handle(msg, &self.db).await?;
 			}
 
-			MessageUpdate(msg) => {
+			MessageUpdate(ref msg) => {
 				if self.channel_id == msg.channel_id { return Ok(()) }
 				if let Some(ref author) = msg.author {
 					if self.current_user.id == author.id { return Ok(()) }
 				} else { return Ok(()) }
-				events::message_update::handle(msg, &self.db).await?;
+				events::message_update::handle(msg, &self.db, &event).await?;
 			}
 
 			// unused events
