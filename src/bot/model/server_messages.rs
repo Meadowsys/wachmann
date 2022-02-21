@@ -40,6 +40,16 @@ impl ServerMessage for Error {}
 
 
 #[derive(Deserialize, Debug)]
+pub struct No {
+	pub message: NoTagEnum
+}
+#[derive(Deserialize, Debug)]
+pub enum NoTagEnum { #[serde(rename = "no")] Tag }
+pub use NoTagEnum::Tag as NoMessageTag;
+impl ServerMessage for No {}
+
+
+#[derive(Deserialize, Debug)]
 pub struct Message {
 	pub message: MessageTagEnum,
 	pub id: Id::<MessageMarker>,
@@ -55,16 +65,6 @@ impl ServerMessage for Message {}
 
 
 #[derive(Deserialize, Debug)]
-pub struct NoMessage {
-	pub message: NoMessageTagEnum
-}
-#[derive(Deserialize, Debug)]
-pub enum NoMessageTagEnum { #[serde(rename = "no_message")] Tag }
-pub use NoMessageTagEnum::Tag as NoMessageTag;
-impl ServerMessage for NoMessage {}
-
-
-#[derive(Deserialize, Debug)]
 pub struct User {
 	pub message: UserTagEnum,
 	pub id: Id::<UserMarker>,
@@ -77,13 +77,3 @@ pub struct User {
 pub enum UserTagEnum { #[serde(rename = "user")] Tag }
 pub use UserTagEnum::Tag as UserTag;
 impl ServerMessage for User {}
-
-
-#[derive(Deserialize, Debug)]
-pub struct NoUser {
-	pub message: NoUserTagEnum
-}
-#[derive(Deserialize, Debug)]
-pub enum NoUserTagEnum { #[serde(rename = "no_user")] Tag }
-pub use NoUserTagEnum::Tag as NoUserTag;
-impl ServerMessage for NoUser {}

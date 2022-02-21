@@ -94,7 +94,7 @@ export async function create_handle_data(
 			{ graceful: true }
 		);
 
-		if (!msg) return void write({ message: "no_message" });
+		if (!msg) return void write({ message: "no" });
 
 		let msg_parse_result = message_parser.safeParse({
 			message: "message",
@@ -122,7 +122,7 @@ export async function create_handle_data(
 			{ graceful: true }
 		);
 
-		if (!user) return void write({ message: "no_user" });
+		if (!user) return void write({ message: "no" });
 
 		let user_parse_result = user_parser.safeParse({
 			message: "user",

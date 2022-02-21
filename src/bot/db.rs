@@ -207,7 +207,7 @@ impl Database {
 		match serde_json::from_str::<server_messages::Message>(&str_res) {
 			Ok(res) => { Ok(Some(res)) }
 			Err(e) => {
-				let no_msg_res = serde_json::from_str::<server_messages::NoMessage>(&str_res);
+				let no_msg_res = serde_json::from_str::<server_messages::No>(&str_res);
 				match no_msg_res {
 					Ok(_) => { Ok(None) }
 					Err(_) => { Err(Box::new(e)) }
@@ -230,7 +230,7 @@ impl Database {
 		let str_res = self.process_query_no_parse(msg).await?;
 		match serde_json::from_str::<server_messages::User>(&str_res) {
 			Ok(res) => { Ok(Some(res)) }
-			Err(e) => match serde_json::from_str::<server_messages::NoUser>(&str_res) {
+			Err(e) => match serde_json::from_str::<server_messages::No>(&str_res) {
 				Ok(_) => { Ok(None) }
 				Err(_) => { Err(Box::new(e)) }
 			}
