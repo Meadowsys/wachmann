@@ -5,7 +5,6 @@
 
 use twilight_bot_utils::prelude::*;
 use serde::Serialize;
-
 pub trait ClientMessage: Serialize {}
 
 

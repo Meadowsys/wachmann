@@ -4,11 +4,8 @@
 // workaround for now: https://github.com/serde-rs/serde/issues/760#issuecomment-499570311
 
 use twilight_bot_utils::prelude::*;
-
 use serde::Deserialize;
-use serde::de::DeserializeOwned;
-
-pub trait ServerMessage: DeserializeOwned {}
+pub trait ServerMessage: serde::de::DeserializeOwned {}
 
 
 #[derive(Deserialize, Debug)]
