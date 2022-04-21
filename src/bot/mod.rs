@@ -2,6 +2,7 @@ mod db;
 mod env;
 mod logging;
 mod model;
+mod webhook;
 
 use twilight_bot_utils::prelude::*;
 

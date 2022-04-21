@@ -7,9 +7,8 @@ use twilight_util::link::webhook::parse;
 mod events;
 
 pub struct Logging {
-	webhook_url: String,
-	token: String,
-	id: Id::<WebhookMarker>,
+	webhook_id: Id<WebhookMarker>,
+	webhook_token: String,
 	current_user: CurrentUser,
 	channel_id: Id::<ChannelMarker>,
 	db: Arc<Database>
@@ -23,10 +22,11 @@ pub fn new(webhook_url: String, db: Arc<Database>) -> Logging {
 #[allow(clippy::new_without_default)]
 impl Logging {
 	pub fn new(webhook_url: String, db: Arc<Database>) -> Self {
+		let (webhook_id, webhook_token) = twilight_util::link::webhook::parse(&webhook_url).unwrap();
+
 		Self {
-			webhook_url,
-			token: String::new(),
-			id: Id::<WebhookMarker>::new(1),
+			webhook_id,
+			webhook_token: webhook_token.unwrap().into(),
 			current_user: CurrentUser {
 				accent_color: None,
 				avatar: None,
@@ -49,33 +49,12 @@ impl Logging {
 	}
 }
 
-impl Logging {
-	#[allow(dead_code)]
-	pub fn send(&self, http: &Arc<HttpClient>, message: String) -> impl Future<Output = MainResult> {
-		let http = Arc::clone(http);
-		let id = self.id;
-		let token = self.token.clone();
-
-		async move {
-			http.execute_webhook(id, &token)
-				.content(&message)?
-				.exec().await?;
-
-			Ok(())
-		}
-	}
-}
-
 #[async_trait]
 impl Module for Logging {
 	async fn init(&mut self, stuff: &InitStuff) -> InitResult {
-		let (id, token) = parse(&self.webhook_url)?;
-
-		self.id = id;
-		self.token = token.ok_or("webhook token missing")?.into();
 		self.current_user = stuff.current_user.clone();
 
-		self.channel_id = stuff.http.webhook(id)
+		self.channel_id = stuff.http.webhook(self.webhook_id)
 			.exec().await?
 			.model().await?
 			.channel_id;
@@ -99,7 +78,7 @@ impl Module for Logging {
 				if let Some(ref author) = msg.author {
 					if self.current_user.id == author.id { return Ok(()) }
 				} else { return Ok(()) }
-				events::message_update::handle(msg, &self.db, &event).await?;
+				events::message_update::handle(msg, &event, &self).await?;
 			}
 
 			// unused events
