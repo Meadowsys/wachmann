@@ -1,5 +1,4 @@
 mod db;
-mod env;
 mod logging;
 mod model;
 mod webhook;
