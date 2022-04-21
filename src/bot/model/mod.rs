@@ -1,5 +1,6 @@
 pub mod client_messages;
 pub mod server_messages;
+pub mod config;
 
 
 // copy pasted from twilight_model/src/user/mod.rs

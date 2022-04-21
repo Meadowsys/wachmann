@@ -77,3 +77,13 @@ pub struct User {
 pub enum UserTagEnum { #[serde(rename = "user")] Tag }
 pub use UserTagEnum::Tag as UserTag;
 impl ServerMessage for User {}
+
+#[derive(Deserialize, Debug)]
+pub struct Config {
+	pub message: ConfigTagEnum,
+	pub config: super::config::Config
+}
+#[derive(Deserialize, Debug)]
+pub enum ConfigTagEnum { #[serde(rename = "config")] Tag }
+pub use ConfigTagEnum::Tag as ConfigTag;
+impl ServerMessage for Config {}

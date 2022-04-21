@@ -1,6 +1,7 @@
 // structs and things for messages sent by the server to the client
 
 import { z, literal, object, string, union } from "zod";
+import { config_parser as config_struct_parser } from "./config";
 
 export type Ready = z.infer<typeof ready_parser>;
 export const ready_parser = object({
@@ -40,6 +41,12 @@ export const user_parser = object({
 	name: string(),
 	discriminator: string(),
 	avatar_url: string().url()
+});
+
+export type Config = z.infer<typeof config_parser>;
+export const config_parser = object({
+	message: literal("config"),
+	config: config_struct_parser
 });
 
 export type ServerMessages = z.infer<typeof server_messages>;
