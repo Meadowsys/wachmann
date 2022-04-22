@@ -72,7 +72,7 @@ export async function create_handle_data(
 				error: `Unknown message: ${(data as any).message}`
 			});
 
-			console.error(`UNKNOWN MESSAGE HAPPENED`);
+			console.error("UNKNOWN MESSAGE HAPPENED");
 			console.error(inspect(data, {
 				showHidden: true,
 				depth: 1000,
