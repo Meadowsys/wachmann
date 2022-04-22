@@ -3,8 +3,16 @@ import { client_messages } from "./client-messages";
 import { message_parser, user_parser } from "./server-messages";
 import { inspect } from "util";
 import type { Database } from "arangojs";
-import type { SaveMessage, GetMessage, SaveUser, GetUser } from "./client-messages";
+import type {
+	GetConfig,
+	UpdateConfig,
+	SaveMessage,
+	GetMessage,
+	SaveUser,
+	GetUser
+} from "./client-messages";
 import type { ServerMessages } from "./server-messages";
+import { config_parser } from "./config";
 
 export async function create_handle_data(
 	connection: net.Socket,
@@ -18,6 +26,9 @@ export async function create_handle_data(
 
 	const users_collection = db.collection<Record<string, unknown>>("users");
 	if (!await users_collection.exists()) await users_collection.create();
+
+	const config_collection = db.collection<Record<string, unknown>>("config");
+	if (!await config_collection.exists()) await config_collection.create();
 
 	return { write, handle_data };
 
@@ -51,6 +62,12 @@ export async function create_handle_data(
 
 			let data = parse_result.data;
 
+			if (data.message === "get_config") {
+				return handle_get_config(data);
+			}
+			if (data.message === "update_config") {
+				return handle_update_config(data);
+			}
 			if (data.message === "save_message") {
 				return handle_save_message(data);
 			}
@@ -79,6 +96,45 @@ export async function create_handle_data(
 				getters: true
 			}));
 		}
+	}
+
+	async function handle_get_config (query: GetConfig) {
+		let config = await config_collection.document(
+			{ _key: query.id },
+			{ graceful: true }
+		);
+
+		if (!config) return void write({ message: "no" });
+
+		let config_parse_result = config_parser.safeParse({
+			guild: config._id,
+			...config
+		});
+		if (!config_parse_result.success) return void write({
+			message: "error",
+			error: JSON.stringify(config_parse_result.error.format())
+		});
+
+		write({
+			message: "config",
+			config: config_parse_result.data
+		});
+	}
+
+	async function handle_update_config(query: UpdateConfig) {
+		let _key = query.config.guild;
+		// @ts-expect-error
+		delete query.config.guild
+
+		config_collection.save(
+			{ _key, ...query.config },
+			{ overwriteMode: "update" }
+		);
+
+		write({ message: "config", config: {
+			...query.config,
+			guild: _key
+		}});
 	}
 
 	async function handle_save_message(query: SaveMessage) {
