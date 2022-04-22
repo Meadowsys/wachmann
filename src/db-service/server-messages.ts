@@ -56,5 +56,6 @@ export const server_messages = union([
 	error_parser,
 	no_parser,
 	message_parser,
-	user_parser
+	user_parser,
+	config_parser
 ]);
