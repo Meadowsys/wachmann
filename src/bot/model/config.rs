@@ -4,6 +4,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
+	pub guild: Id<GuildMarker>,
 	pub main_log_channel: Option<Id<ChannelMarker>>,
 	pub main_webhook_id: Option<Id<WebhookMarker>>,
 	pub main_webhook_token: Option<String>
