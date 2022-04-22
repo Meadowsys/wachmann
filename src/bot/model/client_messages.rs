@@ -71,7 +71,8 @@ pub use UpdateConfigTagEnum::Tag as UpdateConfigTag;
 
 #[derive(Serialize, Debug)]
 pub struct GetConfig {
-	pub message: GetConfigTagEnum
+	pub message: GetConfigTagEnum,
+	pub id: Id::<GuildMarker>
 }
 #[derive(Serialize, Debug)]
 pub enum GetConfigTagEnum { #[serde(rename = "get_config")] Tag }

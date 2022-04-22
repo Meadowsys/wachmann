@@ -42,7 +42,8 @@ export const update_config_parser = object({
 
 export type GetConfig = z.infer<typeof get_config_parser>;
 export const get_config_parser = object({
-	message: literal("get_config")
+	message: literal("get_config"),
+	id: string()
 });
 
 export type ClientMessages = z.infer<typeof client_messages>;
