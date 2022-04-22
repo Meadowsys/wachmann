@@ -236,4 +236,25 @@ impl Database {
 			}
 		}
 	}
+
+	#[inline]
+	pub async fn get_config(&self, msg: &client_messages::GetConfig)
+		-> MainResult<Option<server_messages::Config>>
+	{
+		let str_res = self.process_query_no_parse(msg).await?;
+		match serde_json::from_str::<server_messages::Config>(&str_res) {
+			Ok(res) => { Ok(Some(res)) }
+			Err(e) => match serde_json::from_str::<server_messages::No>(&str_res) {
+				Ok(_) => { Ok(None) }
+				Err(_) => { Err(Box::new(e)) }
+			}
+		}
+	}
+
+	#[inline]
+	pub async fn update_config(&self, msg: &client_messages::UpdateConfig)
+		-> MainResult<server_messages::Config>
+	{
+		self.process_query(msg).await
+	}
 }
