@@ -67,7 +67,7 @@ pub struct UpdateConfig {
 #[derive(Serialize, Debug)]
 pub enum UpdateConfigTagEnum { #[serde(rename = "update_config")] Tag }
 pub use UpdateConfigTagEnum::Tag as UpdateConfigTag;
-
+impl ClientMessage for UpdateConfig {}
 
 #[derive(Serialize, Debug)]
 pub struct GetConfig {
@@ -77,3 +77,4 @@ pub struct GetConfig {
 #[derive(Serialize, Debug)]
 pub enum GetConfigTagEnum { #[serde(rename = "get_config")] Tag }
 pub use GetConfigTagEnum::Tag as GetConfigTag;
+impl ClientMessage for GetConfig {}
