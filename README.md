@@ -134,7 +134,7 @@ rustup default 1.58.1
 
 ## required env variables
 
-you can set them as usual, or alternatively, you can put them in a file called `.env` in the same directory as the programs, and both wachmann and the db service will read variables from it
+you can set them as usual, or alternatively, you can put them in a file called `.env` in the same directory as the programs, and both wachmann and the db will read variables from it
 
 - `TOKEN`: discord bot token, ex: `eeeeeeeeeeeeeeeeeeeeeeee.eeeeee.eeeeeeeeeeeeeeeeeeeeeeeeeee`
 - `ARANGO_URL`: url to connect to the arangodb url, ex: `http://127.0.0.1:8529`
@@ -146,7 +146,7 @@ you can set them as usual, or alternatively, you can put them in a file called `
 
 note: you may need to run `chmod +x wachmann` and `chmod +x db-server.mjs` the first time if the files are not marked as executable
 
-- `./db-server.mjs` first to start database connector service
+- `./db.mjs` first to start database connector thing
 - `./wachmann` to start the bot
 
 [Galacon]: https://www.galacon.eu

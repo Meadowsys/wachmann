@@ -19,7 +19,7 @@ const config = {
 	watch: { clearScreen: false },
 	input: path.resolve("./src/index.ts"),
 	output: {
-		file: path.resolve(`./target/${production ? "release" : "debug"}/db-service.mjs`),
+		file: path.resolve(`./target/${production ? "release" : "debug"}/db.mjs`),
 		format: "es",
 		compact: production,
 		sourcemap: "inline",

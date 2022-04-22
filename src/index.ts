@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-import "./db-service";
+import "./db";

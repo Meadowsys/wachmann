@@ -21,9 +21,9 @@ let db = arangojs({
 	}
 });
 
-let sock_path = "db-service.sock";
+let sock_path = "db.sock";
 let i = 0;
-while (fs.existsSync(sock_path)) sock_path = `db-service-${++i}.sock`;
+while (fs.existsSync(sock_path)) sock_path = `db-${++i}.sock`;
 
 const server = net.createServer();
 server.on("connection", handle_connection);
