@@ -1,4 +1,4 @@
-# milk
+# wiwi
 
 ---
 name: "CI"
@@ -15,9 +15,9 @@ jobs:
       fail-fast: false
       matrix:
         env:
-        - rust: "1.58.1"
-          node: "16.13.2"
-          pnpm: "6.29.1"
+        - rust: "1.60.0"
+          node: "v16.14.2"
+          pnpm: "6.32.9"
     name: create production build
     runs-on: ubuntu-20.04
 
