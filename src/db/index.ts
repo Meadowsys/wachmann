@@ -3,6 +3,7 @@ import "dotenv/config";
 
 import fs from "fs";
 import net from "net";
+import path from "path";
 import { arangojs } from "arangojs";
 import { get_env } from "./env";
 
@@ -21,9 +22,12 @@ let db = arangojs({
 	}
 });
 
-let sock_path = "db.sock";
 let i = 0;
-while (fs.existsSync(sock_path)) sock_path = `db-${++i}.sock`;
+function sock_path_gen() {
+	return path.resolve(`db-${i++}.sock`);
+}
+let sock_path = sock_path_gen();
+while (fs.existsSync(sock_path)) sock_path = sock_path_gen();
 
 const server = net.createServer();
 server.on("connection", handle_connection);
