@@ -1,5 +1,7 @@
 use twilight_bot_utils::prelude::*;
 
+mod db;
+
 use std::time::Duration;
 
 pub fn main() -> MainResult {
@@ -24,6 +26,9 @@ async fn async_main() -> MainResult {
 	let current_user = get_current_user(&http).await?;
 
 	// todo connect db
+	let db = db::Database::spawn().await?;
+	tokio::time::sleep(tokio::time::Duration::from_secs(3)).await;
+	drop(db);
 
 	// todo create modules
 

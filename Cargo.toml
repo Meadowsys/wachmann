@@ -10,6 +10,9 @@ license = "AGPL-3.0-only"
 [dependencies.async-recursion]
 version = "1.0.0"
 
+[dependencies.nix]
+version = "0.24.1"
+
 [dependencies.serde]
 version = "1.0.132"
 features = ["derive"]
