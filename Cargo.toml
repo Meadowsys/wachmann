@@ -19,7 +19,7 @@ version = "1.0.73"
 
 [dependencies.twilight-bot-utils]
 git = "https://github.com/autumnblazey/twilight-bot-utils.git"
-rev = "1abf1bef70741a7ae2531b6e55d8ace224112c39"
+rev = "970252313b2ed69bbd7c59f5a27ed0a79e4984ec"
 
 [profile.dev]
 opt-level = 0 # none
