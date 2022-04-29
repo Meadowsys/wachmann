@@ -17,7 +17,7 @@ jobs:
         env:
         - rust: "1.60.0"
           node: "v16.14.2"
-          pnpm: "6.32.9"
+          pnpm: "6.32.11"
     name: create production build
     runs-on: ubuntu-20.04
 
