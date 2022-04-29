@@ -1,6 +1,7 @@
 import "source-map-support/register";
 import "dotenv/config";
 
+import crypto from "crypto";
 import fs from "fs";
 import net from "net";
 import path from "path";
@@ -29,12 +30,15 @@ function sock_path_gen() {
 let sock_path = sock_path_gen();
 while (fs.existsSync(sock_path)) sock_path = sock_path_gen();
 
+const secret = crypto.randomBytes(256).toString("hex");
+
 const server = net.createServer();
 server.on("connection", handle_connection);
 
 await new Promise<void>(r => server.listen(sock_path, r))
 	.then(() => {
-		orig_console_log(sock_path)
+		orig_console_log(sock_path);
+		orig_console_log(secret);
 		orig_console_log = console.error; // its gone forever muehehhe
 	});
 

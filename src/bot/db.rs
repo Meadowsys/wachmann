@@ -6,6 +6,7 @@ use error::*;
 use nix::sys::signal::kill;
 use nix::sys::signal::SIGINT;
 use nix::unistd::Pid;
+use tokio::process::ChildStdout;
 use std::process::Stdio;
 use tokio::io::AsyncReadExt;
 use tokio::process;
@@ -34,17 +35,20 @@ impl Database {
 			.spawn()?;
 
 		let mut stdout = db_process.stdout.take().ok_or(Box::new(DatabaseConnectionError::ChildProcessNoStdout))?;
-		let mut next_byte = [0u8; 1];
-		let mut read_bytes = vec![];
 
-		let sock_path: MainResult<String> = loop {
-			let read_bytes_num = stdout.read(&mut next_byte).await?;
+		async fn read_line_of_stdout(stdout: &mut ChildStdout) -> MainResult<String> {
+			let mut next_byte = [0u8; 1];
+			let mut read_bytes = Vec::with_capacity(512);
+			loop {
+				let num_of_read_bytes = stdout.read(&mut next_byte).await?;
+				if num_of_read_bytes == 0 { break Err(Box::new(DatabaseConnectionError::UnexpectedStdoutEnd)) }
+				if next_byte[0] == b'\n' { break Ok(String::from_utf8(read_bytes)?) }
+				read_bytes.push(next_byte[0]);
+			}
+		}
 
-			if read_bytes_num == 0 { break Err(Box::new(DatabaseConnectionError::UnexpectedStdoutEnd)) }
-			if next_byte[0] == b'\n' { break Ok(String::from_utf8(read_bytes)?) }
-
-			read_bytes.push(next_byte[0]);
-		};
+		let sock_path = read_line_of_stdout(&mut stdout).await?;
+		let secret = read_line_of_stdout(&mut stdout).await?;
 
 		Ok(Database { db_process })
 	}
