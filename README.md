@@ -26,17 +26,17 @@ Automated compiled builds are available on [Github Actions].
 
 - start arangodb (if you didn't touch anything on install, it should be running as a system service so nothing needs to be done. if you did something else you would probably know what you need to do)
 - `pnpm run dev` starts a file watcher to compile the typescript code on change
-- `cargo r` builds and runs the rust code, which runs and connects to the typescript code
+- `cargo r` builds and runs the rust code, which runs the typescript code and connects to it
 
 ## building for production
 
 - `pnpm run build` builds the typescript database connector code
 - `cargo b --release` builds the rust code
-- outputs: `target/release/db.mjs` and `target/release/wachmann`, only these two files are required in production
+- outputs: `target/release/wachmann` (the typescript code is embedded in this binary), only this single file is required in production
 
 ## required env variables
 
-you can set them as usual, or alternatively, you can put them in a file called `.env` in the same directory as the programs, and both wachmann and the db will read variables from it
+set them however you would like. using `.env` files is supported
 
 - `TOKEN`: discord bot token, ex: `eeeeeeeeeeeeeeeeeeeeeeee.eeeeee.eeeeeeeeeeeeeeeeeeeeeeeeeee`
 - `ARANGO_URL`: url to connect to the arangodb url, ex: `http://127.0.0.1:8529`
@@ -46,9 +46,8 @@ you can set them as usual, or alternatively, you can put them in a file called `
 
 ## running wachmann
 
-note: you may need to run `chmod +x wachmann` and `chmod +x db-server.mjs` the first time if the files are not marked as executable
+note: you may need to run `chmod +x wachmann` the first time if the files are not marked as executable
 
-- `./db.mjs` first to start database connector thing
 - `./wachmann` to start the bot
 
 [Galacon]: https://www.galacon.eu
