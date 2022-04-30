@@ -25,7 +25,7 @@ let db = arangojs({
 
 let i = 0;
 function sock_path_gen() {
-	return path.resolve(`db-${i++}.sock`);
+	return path.resolve(`dbsock-${i++}.sock`);
 }
 let sock_path = sock_path_gen();
 while (fs.existsSync(sock_path)) sock_path = sock_path_gen();
