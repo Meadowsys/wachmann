@@ -1,6 +1,7 @@
 use twilight_bot_utils::prelude::*;
 
 mod db;
+mod modules;
 
 use std::time::Duration;
 
@@ -27,10 +28,13 @@ async fn async_main() -> MainResult {
 
 	// todo connect db
 	let db = db::Database::spawn().await?;
-	tokio::time::sleep(tokio::time::Duration::from_secs(3)).await;
-	drop(db);
 
 	// todo create modules
+	let mut modules = ModuleHandler::with_capacity(10);
+	modules.add_module(modules::ready::ReadyListener);
+	let modules = modules
+		.init_modules(&http, &current_user).await?
+		.into_modules();
 
 	cluster.up().await;
 	// print up once cluster is up
@@ -41,6 +45,8 @@ async fn async_main() -> MainResult {
 		println!("received {sig}, shutting down...");
 		cluster_down.down();
 	}));
+
+	process_events(events, http, modules).await;
 
 	Ok(())
 }
