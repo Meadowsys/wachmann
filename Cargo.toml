@@ -28,6 +28,7 @@ rev = "970252313b2ed69bbd7c59f5a27ed0a79e4984ec"
 opt-level = 0 # none
 debug = true
 debug-assertions = true
+incremental = true
 
 [profile.release]
 opt-level = 3 # all
